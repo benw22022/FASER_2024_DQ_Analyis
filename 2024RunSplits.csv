@@ -1,0 +1,6 @@
+Box,Installed,Removed,StartRun,StartReason,EndRun,EndReason,Tag
+F241,20/03/2024,06/05/2024,14399,Restart after FASERnu intervention,15026,top run for FASERnu accesss (PMT HV OFF already),p0011
+Tungsten,06/05/2024,12/06/2024,15030,start physics after FASERnu intervention,15594,Restart for fill 9776 stop run for TS1 tests,p0011
+F242,12/06/2024,08/07/2024,15652,"Starting new run with physics run type since we now have first beam after TS1",15820,Stop for access,p0011
+CaloNu,10/07/2024,04/10/2024,15821,"Restart physics run after calibrations""",16924,Stop for FASERnu exchange access,p0011 and p0012
+F243,04/10/2024,22/10/2024,16928,Restart after FASERnu exchange access,17230,CHECK!,p0012

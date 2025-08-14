@@ -1,2 +1,6 @@
 *.root
 *.png
+log
+*.log
+log.*
+test.ipynb
