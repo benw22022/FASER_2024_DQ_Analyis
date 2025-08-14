@@ -4,3 +4,4 @@ log
 *.log
 log.*
 test.ipynb
+plot.ipynb
