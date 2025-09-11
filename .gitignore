@@ -5,3 +5,5 @@ log
 log.*
 test.ipynb
 plot.ipynb
+*.err
+*.out

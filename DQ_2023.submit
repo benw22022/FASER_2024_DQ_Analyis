@@ -1,0 +1,12 @@
+universe = vanilla
+executable = run_DQ.sh
+arguments = $(runs) $(output_dir) 
+output = $(output_dir)/logs/job_$(runs)_$(Process).out
+error = $(output_dir)/logs/job_$(runs)_$(Process).err
+log = $(output_dir)/logs/job_$(runs)_$(Process).log
+request_cpus = 4
++JobFlavour = "longlunch"
+on_exit_remove   = (ExitBySignal == False) && (ExitCode == 0)
+max_retries      = 3
+requirements     = (Machine =!= split(LastRemoteHost, "@")[1])
+queue runs, output_dir from args_2023.txt
