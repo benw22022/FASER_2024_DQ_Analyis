@@ -7,3 +7,8 @@ test.ipynb
 plot.ipynb
 *.err
 *.out
+*.tar
+*.gz
+*.zip
+*.pdf
+__pycache__
