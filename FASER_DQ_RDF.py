@@ -14,11 +14,11 @@ Adapted to work with the new p0011/p0012 2024 data
 import os
 import glob
 import json
+import shutil
 import argparse
 from pathlib import Path
 from typing import List, Dict
 
-import yaml
 import ROOT
 import uproot
 import numpy as np
@@ -160,40 +160,6 @@ def make_good_times_cut(path_to_grls: str) -> str:
     return cut_str.rstrip(" || ")
 
 
-def parse_sample_yaml(fpath: str, keyname:str='samples') -> List[str]:
-    """
-    Function to parse a yaml file containing sample filepaths
-    Automatically expands wildcards in paths
-
-    args:
-        fpath: str - file path to yaml file to load
-        keyname: str (optional) - the name of the key in the yaml file which contains the list of file paths to return (default = 'samples')
-
-    returns:
-        files: List[str] - a list if the yaml files to load
-    
-    raises:
-        OSError if `fpath` does not exist 
-    """
-
-    if not Path(fpath).exists():
-        print(f"Error: Unable to find sample file {fpath}")
-        raise OSError("Unable to open file")
-
-    with open(fpath, 'r') as f:
-        result_dict = yaml.safe_load(f)
-
-        if keyname not in result_dict.keys():
-            print(f"Warning: samples file {fpath} does not contain required key '{keyname}'")
-
-        files = result_dict.get(keyname, [])
-        files = [glob.glob(f) for f in files]   # Expand any wildcards
-        files = [x for xs in files for x in xs] # Flatten nested list
-        
-        print(f"Info: Found {len(files)} in {fpath}")
-        
-        return files
-
 
 def validate_file_list(file_list) -> List[str]:
     """
@@ -229,38 +195,6 @@ def validate_file_list(file_list) -> List[str]:
 
     return good_files
 
-
-
-
-def get_per_run_filelists(input_files: List[str]) -> List[str]:
-    """
-    Function which can generate a list of file from a list of `.yaml` files or a simple list of file paths (if latter this function doesn't really do anything)
-    TODO: Support more input file type e.g. JSON, INI etc... ?
-
-    args:
-        input_files: List[str] - list of input files. If files end in `.yaml` then try and load them from the `.yaml` file
-    
-    returns:
-        input_file_list: List[str] - a list of the file paths parsed
-
-    raises:
-        OSError: if input_files are not .root or .yaml
-    """
-
-    input_file_list = []
-    for fpath in input_files:
-        if fpath.endswith(".yaml"):
-            files = parse_sample_yaml(fpath)
-            input_files += files
-
-        elif fpath.endswith(".root"):
-            input_file_list.append(fpath)
-        else:
-            raise OSError(f"Error: Cannot read {fpath}. Files must be either `.root` or `.yaml`.")
-
-    input_file_list = validate_file_list(input_file_list)
-
-    return input_file_list
 
 
 def check_df_and_apply_alias(df: ROOT.RDataFrame, column_name: str, column_alias: str) -> ROOT.RDataFrame:
@@ -347,7 +281,7 @@ def alias_p0012_data(df: ROOT.RDataFrame) -> ROOT.RDataFrame:
     return df
 
 
-def alias_r0022_data(df: ROOT.RDataFrame) -> ROOT.RDataFrame:
+def alias_r0022_data(df: ROOT.RDataFrame, has_veto11) -> ROOT.RDataFrame:
     """
     The names of some variables changed with the introduction of prompt reco tag r0022 (in August 2025) 
     This function creates an alias which maps the new names back onto the old ones
@@ -366,6 +300,14 @@ def alias_r0022_data(df: ROOT.RDataFrame) -> ROOT.RDataFrame:
     "VetoSt20_": "Veto20_",
     "VetoSt21_": "Veto21_",
     }
+    if not has_veto11:
+        veto_prefix_map = {
+        "VetoSt10_": "Veto10_",
+        "VetoSt11_": "Veto10_", # fudge to get code to run on 2022/23 data
+        "VetoSt20_": "Veto20_",
+        "VetoSt21_": "Veto21_",
+        }
+
 
     veto_variables = [
     # "time",
@@ -434,8 +376,10 @@ def book_per_run_hists(df: ROOT.RDataFrame, run_number: int=None, lumi: float=No
     if lumi:
         nevents = df_this_run.Count().GetValue()
         weight = lumi
-        print(f"Info: Lumi = {lumi:.2f}")
-        print(f"Info: Weight = {weight / nevents:.5f}")
+        if nevents == 0:
+            print(f"Warning: nevents = 0, setting to 1")
+            nevents = 1
+        print(f"Info: Weight = {weight / nevents}")
 
     df_this_run = df_this_run.Define("weight", f"{weight / nevents}")
 
@@ -450,6 +394,7 @@ def book_per_run_hists(df: ROOT.RDataFrame, run_number: int=None, lumi: float=No
     per_run_histos.append(df_this_run.Histo1D(("Track_pz_charge0", "Track_pz_charge0;Track_pz_charge0;Events", 100, -500*GeV, 500*GeV), f"Track_pz_charge0", "weight"))
     per_run_histos.append(df_this_run.Histo1D(("Track_Chi2", "Track_Chi2;Track_Chi2;Events", 50, 0, 50), f"Track_Chi2", "weight"))
     per_run_histos.append(df_this_run.Histo1D(("Track_Chi2_2", "Track_Chi2_2;Track_Chi2_2;Events", 50, 0, 500), f"Track_Chi2", "weight"))
+    per_run_histos.append(df_this_run.Histo1D(("Track_chi2_per_dof", "Track_chi2_per_dof;Track_chi2_per_dof;Events", 50,0,25), f"Track_chi2_per_dof", "weight"))
     per_run_histos.append(df_this_run.Histo1D(("Track_nDoF", "Track_nDoF;Track_nDoF;Events", 20, 0, 20), f"Track_nDoF", "weight"))
     per_run_histos.append(df_this_run.Histo1D(("Track_x0", "Track_x0;Track_x0;Events", 100, -100, 100), f"Track_x0", "weight"))
     per_run_histos.append(df_this_run.Histo1D(("Track_y0", "Track_y0;Track_y0;Events", 100, -100, 100), f"Track_y0", "weight"))
@@ -469,18 +414,123 @@ def book_per_run_hists(df: ROOT.RDataFrame, run_number: int=None, lumi: float=No
     per_run_histos.append(df_this_run.Histo1D(("Timing3_charge", "Timing3_charge;Timing3_charge;Events", 50, 1.0, 80.0), f"Timing3_charge", "weight"))
     per_run_histos.append(df_this_run.Histo1D(("Preshower0_charge", "Preshower0_charge;Preshower0_charge;Events", 50, 0.01, 15.0), f"Preshower0_charge", "weight"))
     per_run_histos.append(df_this_run.Histo1D(("Preshower1_charge", "Preshower1_charge;Preshower1_charge;Events", 50, 0.01, 15.0), f"Preshower1_charge", "weight"))
+
+    df_hits_vetonu0 = df_this_run.Filter("hitsVetoNu0", "hitsVetoNu0")
+    df_hits_vetonu1 = df_this_run.Filter("hitsVetoNu1", "hitsVetoNu0")
+    per_run_histos.append(df_hits_vetonu0.Histo1D(("VetoNu0_triggertime", "VetoNu0_triggertime;VetoNu0_triggertime;Events", 100, -50, 25), f"VetoNu0_triggertime", "weight"))
+    per_run_histos.append(df_hits_vetonu0.Histo1D(("VetoNu0_localtime", "VetoNu0_localtime;VetoNu0_localtime;Events", 100, 100, 200), f"VetoNu0_localtime", "weight"))
+    per_run_histos.append(df_hits_vetonu0.Histo1D(("VetoNu0_bcidtime", "VetoNu0_bcidtime;VetoNu0_bcidtime;Events", 100, 0, 30), f"VetoNu0_bcidtime", "weight"))
+    
+    per_run_histos.append(df_hits_vetonu1.Histo1D(("VetoNu1_triggertime", "VetoNu1_triggertime;VetoNu1_triggertime;Events", 100, -50, 25), f"VetoNu1_triggertime", "weight"))
+    per_run_histos.append(df_hits_vetonu1.Histo1D(("VetoNu1_localtime", "VetoNu1_localtime;VetoNu1_localtime;Events", 100, 100, 200), f"VetoNu1_localtime", "weight"))
+    per_run_histos.append(df_hits_vetonu1.Histo1D(("VetoNu1_bcidtime", "VetoNu1_bcidtime;VetoNu1_bcidtime;Events", 100, 0, 30), f"VetoNu1_bcidtime", "weight"))
+    
+    df_hits_veto10 = df_this_run.Filter("hitsVeto10")
+    df_hits_veto11 = df_this_run.Filter("hitsVeto11")
+    df_hits_veto20 = df_this_run.Filter("hitsVeto20")
+    df_hits_veto21 = df_this_run.Filter("hitsVeto21")
+    per_run_histos.append(df_hits_veto10.Histo1D(("VetoSt10_triggertime", "VetoSt10_triggertime;VetoSt10_triggertime;Events", 100, -100, 50), f"Veto10_triggertime", "weight"))
+    per_run_histos.append(df_hits_veto10.Histo1D(("VetoSt10_localtime", "VetoSt10_localtime;VetoSt10_localtime;Events", 100, 120, 225), f"Veto10_localtime", "weight"))
+    per_run_histos.append(df_hits_veto10.Histo1D(("VetoSt10_bcidtime", "VetoSt10_bcidtime;VetoSt10_bcidtime;Events", 100, 0, 30), f"Veto10_bcidtime", "weight"))
+
+    per_run_histos.append(df_hits_veto11.Histo1D(("VetoSt11_triggertime", "VetoSt11_triggertime;VetoSt11_triggertime;Events", 100, -100, 50), f"Veto11_triggertime", "weight"))
+    per_run_histos.append(df_hits_veto11.Histo1D(("VetoSt11_localtime", "VetoSt11_localtime;VetoSt11_localtime;Events", 100, 120, 225), f"Veto11_localtime", "weight"))
+    per_run_histos.append(df_hits_veto11.Histo1D(("VetoSt11_bcidtime", "VetoSt11_bcidtime;VetoSt11_bcidtime;Events", 100, 0, 30), f"Veto11_bcidtime", "weight"))    
+
+    per_run_histos.append(df_hits_veto20.Histo1D(("VetoSt20_triggertime", "VetoSt20_triggertime;VetoSt20_triggertime;Events", 100, -100, 50), f"Veto20_triggertime", "weight"))
+    per_run_histos.append(df_hits_veto20.Histo1D(("VetoSt20_localtime", "VetoSt20_localtime;VetoSt20_localtime;Events", 100, 120, 225), f"Veto20_localtime", "weight"))
+    per_run_histos.append(df_hits_veto20.Histo1D(("VetoSt20_bcidtime", "VetoSt20_bcidtime;VetoSt20_bcidtime;Events", 100, 0, 30), f"Veto20_bcidtime", "weight"))
+
+    per_run_histos.append(df_hits_veto21.Histo1D(("VetoSt21_triggertime", "VetoSt21_triggertime;VetoSt21_triggertime;Events", 100, -100, 50), f"Veto21_triggertime", "weight"))
+    per_run_histos.append(df_hits_veto21.Histo1D(("VetoSt21_localtime", "VetoSt21_localtime;VetoSt21_localtime;Events", 100, 120, 225), f"Veto21_localtime", "weight"))
+    per_run_histos.append(df_hits_veto21.Histo1D(("VetoSt21_bcidtime", "VetoSt21_bcidtime;VetoSt21_bcidtime;Events", 100, 0, 30), f"Veto21_bcidtime", "weight"))
+    
+    df_hits_timing0 = df_this_run.Filter("hitsTiming0")
+    df_hits_timing1 = df_this_run.Filter("hitsTiming1")
+    df_hits_timing2 = df_this_run.Filter("hitsTiming2")
+    df_hits_timing3 = df_this_run.Filter("hitsTiming3")
+    per_run_histos.append(df_hits_timing0.Histo1D(("Timing0_triggertime", "Timing0_triggertime;Timing0_triggertime;Events", 100, -75, 50), f"Timing0_triggertime", "weight"))
+    per_run_histos.append(df_hits_timing0.Histo1D(("Timing0_localtime", "Timing0_localtime;Timing0_localtime;Events", 100, 150, 225), f"Timing0_localtime", "weight"))
+    per_run_histos.append(df_hits_timing0.Histo1D(("Timing0_bcidtime", "Timing0_bcidtime;Timing0_bcidtime;Events", 100, 0, 30), f"Timing0_bcidtime", "weight"))
+    
+    per_run_histos.append(df_hits_timing1.Histo1D(("Timing1_triggertime", "Timing1_triggertime;Timing1_triggertime;Events", 100, -75, 50), f"Timing1_triggertime", "weight"))
+    per_run_histos.append(df_hits_timing1.Histo1D(("Timing1_localtime", "Timing1_localtime;Timing1_localtime;Events", 100, 150, 225), f"Timing1_localtime", "weight"))
+    per_run_histos.append(df_hits_timing1.Histo1D(("Timing1_bcidtime", "Timing1_bcidtime;Timing1_bcidtime;Events", 100, 0, 30), f"Timing1_bcidtime", "weight"))
+    
+    per_run_histos.append(df_hits_timing2.Histo1D(("Timing2_triggertime", "Timing2_triggertime;Timing2_triggertime;Events", 100, -75, 50), f"Timing2_triggertime", "weight"))
+    per_run_histos.append(df_hits_timing2.Histo1D(("Timing2_localtime", "Timing2_localtime;Timing2_localtime;Events", 100, 150, 225), f"Timing2_localtime", "weight"))
+    per_run_histos.append(df_hits_timing2.Histo1D(("Timing2_bcidtime", "Timing2_bcidtime;Timing2_bcidtime;Events", 100, 0, 30), f"Timing2_bcidtime", "weight"))
+    
+    per_run_histos.append(df_hits_timing3.Histo1D(("Timing3_triggertime", "Timing3_triggertime;Timing3_triggertime;Events", 100, -75, 50), f"Timing3_triggertime", "weight"))
+    per_run_histos.append(df_hits_timing3.Histo1D(("Timing3_localtime", "Timing3_localtime;Timing3_localtime;Events", 100, 150, 225), f"Timing3_localtime", "weight"))
+    per_run_histos.append(df_hits_timing3.Histo1D(("Timing3_bcidtime", "Timing3_bcidtime;Timing3_bcidtime;Events", 100, 0, 30), f"Timing3_bcidtime", "weight"))
+
+    df_hits_preshower0 = df_this_run.Filter("hitsPreshower0")
+    df_hits_preshower1 = df_this_run.Filter("hitsPreshower1")
+    per_run_histos.append(df_hits_preshower0.Histo1D(("Preshower0_triggertime", "Preshower0_triggertime;Preshower0_triggertime;Events", 100, -75, 50), f"Preshower0_triggertime", "weight"))
+    per_run_histos.append(df_hits_preshower0.Histo1D(("Preshower0_localtime", "Preshower0_localtime;Preshower0_localtime;Events", 100, 150, 225), f"Preshower0_localtime", "weight"))
+    per_run_histos.append(df_hits_preshower0.Histo1D(("Preshower0_bcidtime", "Preshower0_bcidtime;Preshower0_bcidtime;Events", 100, 0, 30), f"Preshower0_bcidtime", "weight"))
+    
+    per_run_histos.append(df_hits_preshower1.Histo1D(("Preshower1_triggertime", "Preshower1_triggertime;Preshower1_triggertime;Events", 100, -75, 50), f"Preshower1_triggertime", "weight"))
+    per_run_histos.append(df_hits_preshower1.Histo1D(("Preshower1_localtime", "Preshower1_localtime;Preshower1_localtime;Events", 100, 150, 225), f"Preshower1_localtime", "weight"))
+    per_run_histos.append(df_hits_preshower1.Histo1D(("Preshower1_bcidtime", "Preshower1_bcidtime;Preshower1_bcidtime;Events", 100, 0, 30), f"Preshower1_bcidtime", "weight"))
+    
+    df_hits_calolo0 = df_this_run.Filter("hitsCaloLo0")
+    df_hits_calolo1 = df_this_run.Filter("hitsCaloLo1")
+    df_hits_calolo2 = df_this_run.Filter("hitsCaloLo2")
+    df_hits_calolo3 = df_this_run.Filter("hitsCaloLo3")
+    per_run_histos.append(df_hits_calolo0.Histo1D(("CaloLo0_triggertime", "CaloLo0_triggertime;CaloLo0_triggertime;Events", 100, -75, 50), f"CaloLo0_triggertime", "weight"))
+    per_run_histos.append(df_hits_calolo0.Histo1D(("CaloLo0_localtime", "CaloLo0_localtime;CaloLo0_localtime;Events", 100, 150, 225), f"CaloLo0_localtime", "weight"))
+    per_run_histos.append(df_hits_calolo0.Histo1D(("CaloLo0_bcidtime", "CaloLo0_bcidtime;CaloLo0_bcidtime;Events", 100, 0, 30), f"CaloLo0_bcidtime", "weight"))
+
+    per_run_histos.append(df_hits_calolo1.Histo1D(("CaloLo1_triggertime", "CaloLo1_triggertime;CaloLo1_triggertime;Events", 100, -75, 50), f"CaloLo1_triggertime", "weight"))
+    per_run_histos.append(df_hits_calolo1.Histo1D(("CaloLo1_localtime", "CaloLo1_localtime;CaloLo1_localtime;Events", 100, 150, 225), f"CaloLo1_localtime", "weight"))
+    per_run_histos.append(df_hits_calolo1.Histo1D(("CaloLo1_bcidtime", "CaloLo1_bcidtime;CaloLo1_bcidtime;Events", 100, 0, 30), f"CaloLo1_bcidtime", "weight"))
+
+    per_run_histos.append(df_hits_calolo2.Histo1D(("CaloLo2_triggertime", "CaloLo2_triggertime;CaloLo2_triggertime;Events", 100, -75, 50), f"CaloLo2_triggertime", "weight"))
+    per_run_histos.append(df_hits_calolo2.Histo1D(("CaloLo2_localtime", "CaloLo2_localtime;CaloLo2_localtime;Events", 100, 150, 225), f"CaloLo2_localtime", "weight"))
+    per_run_histos.append(df_hits_calolo2.Histo1D(("CaloLo2_bcidtime", "CaloLo2_bcidtime;CaloLo2_bcidtime;Events", 100, 0, 30), f"CaloLo2_bcidtime", "weight"))
+
+    per_run_histos.append(df_hits_calolo3.Histo1D(("CaloLo3_triggertime", "CaloLo3_triggertime;CaloLo3_triggertime;Events", 100, -75, 50), f"CaloLo3_triggertime", "weight"))
+    per_run_histos.append(df_hits_calolo3.Histo1D(("CaloLo3_localtime", "CaloLo3_localtime;CaloLo3_localtime;Events", 100, 150, 225), f"CaloLo3_localtime", "weight"))
+    per_run_histos.append(df_hits_calolo3.Histo1D(("CaloLo3_bcidtime", "CaloLo3_bcidtime;CaloLo3_bcidtime;Events", 100, 0, 30), f"CaloLo3_bcidtime", "weight"))
+    
+    df_hits_calohi0 = df_this_run.Filter("hitsCaloHi0")
+    df_hits_calohi1 = df_this_run.Filter("hitsCaloHi1")
+    df_hits_calohi2 = df_this_run.Filter("hitsCaloHi2")
+    df_hits_calohi3 = df_this_run.Filter("hitsCaloHi3")
+    per_run_histos.append(df_hits_calohi0.Histo1D(("CaloHi0_triggertime", "CaloHi0_triggertime;CaloHi0_triggertime;Events", 100,  -75, 50), f"CaloHi0_triggertime", "weight"))
+    per_run_histos.append(df_hits_calohi0.Histo1D(("CaloHi0_localtime", "CaloHi0_localtime;CaloHi0_localtime;Events", 100, 150, 225), f"CaloHi0_localtime", "weight"))
+    per_run_histos.append(df_hits_calohi0.Histo1D(("CaloHi0_bcidtime", "CaloHi0_bcidtime;CaloHi0_bcidtime;Events", 100, 0, 30), f"CaloHi0_bcidtime", "weight"))
+
+    per_run_histos.append(df_hits_calohi1.Histo1D(("CaloHi1_triggertime", "CaloHi1_triggertime;CaloHi1_triggertime;Events", 100,  -75, 50), f"CaloHi1_triggertime", "weight"))
+    per_run_histos.append(df_hits_calohi1.Histo1D(("CaloHi1_localtime", "CaloHi1_localtime;CaloHi1_localtime;Events", 100, 150, 225), f"CaloHi1_localtime", "weight"))
+    per_run_histos.append(df_hits_calohi1.Histo1D(("CaloHi1_bcidtime", "CaloHi1_bcidtime;CaloHi1_bcidtime;Events", 100, 0, 30), f"CaloHi1_bcidtime", "weight"))
+
+    per_run_histos.append(df_hits_calohi2.Histo1D(("CaloHi2_triggertime", "CaloHi2_triggertime;CaloHi2_triggertime;Events", 100,  -75, 50), f"CaloHi2_triggertime", "weight"))
+    per_run_histos.append(df_hits_calohi2.Histo1D(("CaloHi2_localtime", "CaloHi2_localtime;CaloHi2_localtime;Events", 100, 150, 225), f"CaloHi2_localtime", "weight"))
+    per_run_histos.append(df_hits_calohi2.Histo1D(("CaloHi2_bcidtime", "CaloHi2_bcidtime;CaloHi2_bcidtime;Events", 100, 0, 30), f"CaloHi2_bcidtime", "weight"))
+
+    per_run_histos.append(df_hits_calohi3.Histo1D(("CaloHi3_triggertime", "CaloHi3_triggertime;CaloHi3_triggertime;Events", 100,  -75, 50), f"CaloHi3_triggertime", "weight"))
+    per_run_histos.append(df_hits_calohi3.Histo1D(("CaloHi3_localtime", "CaloHi3_localtime;CaloHi3_localtime;Events", 100, 150, 225), f"CaloHi3_localtime", "weight"))    
+    per_run_histos.append(df_hits_calohi3.Histo1D(("CaloHi3_bcidtime", "CaloHi3_bcidtime;CaloHi3_bcidtime;Events", 100, 0, 30), f"CaloHi3_bcidtime", "weight"))
+
+
     per_run_histos.append(df_this_run.Histo1D(("Calo0_charge", "Calo0_charge;Calo0_charge;Events", 100, 0.01, 4.0), f"Calo0_charge", "weight"))
     per_run_histos.append(df_this_run.Histo1D(("Calo1_charge", "Calo1_charge;Calo1_charge;Events", 100, 0.01, 4.0), f"Calo1_charge", "weight"))
     per_run_histos.append(df_this_run.Histo1D(("Calo2_charge", "Calo2_charge;Calo2_charge;Events", 100, 0.01, 4.0), f"Calo2_charge", "weight"))
     per_run_histos.append(df_this_run.Histo1D(("Calo3_charge", "Calo3_charge;Calo3_charge;Events", 100, 0.01, 4.0), f"Calo3_charge", "weight"))
-        
+
+    event_times = np.array(df_this_run.AsNumpy(["eventTime"])["eventTime"])
+    per_run_histos.append(df_this_run.Histo1D(("eventTime", "eventTime;eventTime;Events", 100, np.amin(event_times)-1, np.amax(event_times)+1), f"eventTime", "weight"))
+
     return per_run_histos
 
 
-def book_yield_hists(df: ROOT.RDataFrame, run_numbers: List[int]) -> List:
+def book_yield_hists(df: ROOT.RDataFrame, run_number: int) -> List:
 
     yield_hists = []
-    runs = list(run_numbers)
+    runs = [run_number]
 
     nruns = int(max(runs) - min(runs) + 1)
     rmin =  min(runs)
@@ -515,7 +565,12 @@ def build_dataframe(file_list: List[str], tree: str='nt') -> ROOT.RDataFrame:
 
     #* Apply aliases to map p0012 variable names to their old ones
     # df = alias_p0012_data(df)
-    df = alias_r0022_data(df)
+    has_veto11 = True
+    if args.run < 1.2e4: 
+        has_veto11 = False 
+
+
+    df = alias_r0022_data(df, has_veto11)
 
     #* Allow shorter use of vecops functions in strings
     #* e.g. DeltaPhi rather than ROOT::VecOps::DeltaPhi 
@@ -570,122 +625,153 @@ def build_dataframe(file_list: List[str], tree: str='nt') -> ROOT.RDataFrame:
     df = df.Define("Track_y0_pos", "Track_y0[Track_charge > 0]")
     df = df.Define("Track_y0_neg", "Track_y0[Track_charge < 0]")
 
+    df = df.Define("Timing_charge_bottom", "Timing0_raw_charge + Timing1_raw_charge")
+    df = df.Define("Timing_charge_top", "Timing2_raw_charge + Timing3_raw_charge")
+    df = df.Define("Timing_charge_total", "Timing_charge_top + Timing_charge_bottom")
+    
+    df = df.Define("hitsVetoNu0", "VetoNu0_raw_charge > 40")
+    df = df.Define("hitsVetoNu1", "VetoNu1_raw_charge > 40")
+    
+    df = df.Define("hitsVeto10", "Veto10_raw_charge > 40")
+    df = df.Define("hitsVeto11", "Veto11_raw_charge > 40")
+    df = df.Define("hitsVeto20", "Veto20_raw_charge > 40")
+    df = df.Define("hitsVeto21", "Veto21_raw_charge > 40")
+
+    df = df.Define(f"hitsTiming", "((Track_Y_atTrig[0] > 20 && Timing_charge_top > 20) || \
+                                           (Track_Y_atTrig[0] < -20 && Timing_charge_bottom > 20) || \
+                                           (Track_Y_atTrig[0] > -20 && Track_Y_atTrig[0] < 20 && Timing_charge_total > 20))")
+    
+    df = df.Define("hitsTiming0", "Timing0_status == 0")
+    df = df.Define("hitsTiming1", "Timing1_status == 0")
+    df = df.Define("hitsTiming2", "Timing2_status == 0")
+    df = df.Define("hitsTiming3", "Timing3_status == 0")
+    
+    df = df.Define("hitsPreshower0", "Preshower0_raw_charge > 2.5")
+    df = df.Define("hitsPreshower1", "Preshower1_raw_charge > 2.5")
+
+    df = df.Define("hitsCaloLo0", "CaloLo0_status == 0")
+    df = df.Define("hitsCaloLo1", "CaloLo1_status == 0")
+    df = df.Define("hitsCaloLo2", "CaloLo2_status == 0")
+    df = df.Define("hitsCaloLo3", "CaloLo3_status == 0")
+
+    # Brian says that the double peaks in the CaloHi channel are coming from muons hitting the PMTs rather than energy deposits
+    # He suggests requiring that the CaloLo signal is at least 10x  higher than the CaloHi signal
+    df = df.Define("hitsCaloHi0", "(CaloHi0_status == 0) && (CaloLo0_raw_charge > 10 * CaloHi0_raw_charge)")
+    df = df.Define("hitsCaloHi1", "(CaloHi1_status == 0) && (CaloLo1_raw_charge > 10 * CaloHi1_raw_charge)")
+    df = df.Define("hitsCaloHi2", "(CaloHi2_status == 0) && (CaloLo2_raw_charge > 10 * CaloHi2_raw_charge)")
+    df = df.Define("hitsCaloHi3", "(CaloHi3_status == 0) && (CaloLo3_raw_charge > 10 * CaloHi3_raw_charge)")
+
     return df
+
+
+def parse_input_filelists(input_file_list_dir):
+
+    txt_files = glob.glob(f"{input_file_list_dir}/*.txt")
+
+    file_dict = {}
+
+    for fpath in txt_files:
+        with open(fpath, 'r') as f:
+            for line in f:
+                if line.startswith("#"): continue
+
+                the_file_path = line.strip().strip("\n")
+                the_file_name = os.path.basename(the_file_path)
+                the_run_number = the_file_name.split("-")[2]
+                the_run_number = int(the_run_number)
+
+                if the_run_number in file_dict.keys():
+                    file_dict[the_run_number].append(the_file_path)
+                else:
+                    file_dict[the_run_number] = [the_file_path]    
+    return file_dict
 
 
 def main(args: argparse.Namespace) -> None:
 
-    #* Sanity check, if both these flags are set then no histograms will be made
-    if args.skip_per_run and args.skip_yields:
-        print("Warning: `do_yields` and `do_per_run` args set to False. Will not make any histograms.")
-
     #* Enable multithreading
-    ROOT.ROOT.EnableImplicitMT(args.nCPUS)
+    ROOT.ROOT.EnableImplicitMT()
 
     #* Parse input files
-    file_list = get_per_run_filelists(args.input_files)
+    all_files_dict = parse_input_filelists(args.input_file_list_dir)
+    file_list = all_files_dict[args.run]
 
     if len(file_list) <= 0:
         print("Error: Found no files to run over")
         return 1
 
-    print(f"Info: Running over {len(file_list)} files")
-
-    #* Construct dataframes
-    df_for_yields = build_dataframe(file_list)
-
-    #* Print cutflow
-    print("\nInfo: Cutflow Report:")
-    cutReport = df_for_yields.Report()
-    cutReport.Print()
-
-    run_numbers = set(np.array(df_for_yields.AsNumpy(["run"])["run"]))
-    
-    print(run_numbers)
-
-    yield_hists = book_yield_hists(df_for_yields, run_numbers)
+    print(f"Info: Running over {len(file_list)} files for run {args.run}")
+    for file in file_list:
+        print(f"    - {file}")
 
     #* Get lumi dict
     lumi_dict = {}
     lumi_dict = get_run_number_lumi_dict(args.grl_path)
-    total_lumi = None if not lumi_dict else sum(lumi_dict.values())
-    print(f"Total luminosity: {sum(lumi_dict.values()):.3f} /fb")
+    run_lumi = lumi_dict.get(args.run, None)
+    print(f"Info: Run {args.run} luminosity = {run_lumi:.3f} /fb")
 
-    #* Get a list of available run numbers
-    print("Info: Found the following run numbers: ")
-    per_run_hists = {}
-    for number in run_numbers:
-        print(f"   - {int(number)}")
-        run_file_list = []
-        for fpath in file_list:
-            if f"{number}" in fpath:
-                run_file_list.append(fpath)
-        
-        #* Book per run histograms 
-        if not args.skip_per_run and not args.do_not_split:
-            df_for_run = build_dataframe(run_file_list)
-            run_hists = book_per_run_hists(df_for_run, number, lumi=lumi_dict.get(number, None))
-            per_run_hists[number] = run_hists
-
-    #* Book the combined kinematic histograms if requested
-    if args.do_not_split:
-        per_run_hists['All'] = book_per_run_hists(df_for_yields, lumi=total_lumi)
+    #* Construct dataframe
+    df = build_dataframe(file_list)
+    yield_hists = book_yield_hists(df, args.run)
+    run_hists = book_per_run_hists(df, args.run, lumi=run_lumi)
 
     #* Make output file (and output directory if needs be)
-    output_dir = os.path.dirname(args.output_file)
-    os.makedirs(os.path.abspath(output_dir), exist_ok=True)
-    file = ROOT.TFile(args.output_file, "RECREATE")
-    print(f"Info: Writing output to {args.output_file}")
+    output_file = f"{args.run}.root"
+    file = ROOT.TFile(output_file, "RECREATE")
+    tree = ROOT.TTree("dq", "Data Quality")
+    print(f"Info: Writing output to {output_file}")
+    
+    #* Write out run number and lumi for convenience
+    lumi_branch = ROOT.std.vector("float")()
+    lumi_branch.push_back(run_lumi)
+    tree.Branch("lumi", lumi_branch)
 
-    #* For each run write the per run histograms and save them to root file subdirectory
-    if not args.skip_per_run:
-        for run, hists in tqdm(per_run_hists.items(), desc="Info: Filling per run hists: "):
-            subdir1 = file.mkdir(f"Main__{run}")
-            subdir1.cd()
-            subdir2 = subdir1.mkdir(f"PerRun")
-            subdir2.cd()
-            for h in hists:
-                h.Write()
-            file.cd()
-    else:
-        print("Info: Skipping per run hists")
+    run_num_branch = ROOT.std.vector("int")()
+    run_num_branch.push_back(args.run)
+    tree.Branch("run_number", run_num_branch)
 
-    if not args.skip_yields:
-        subdir3 = file.mkdir("Main")
-        subdir3.cd()
-        subdir4 = subdir3.mkdir("Yields")
-        subdir4.cd()
-        for h in tqdm(yield_hists, desc="Info: Filling  yield hists: "):
-            h.Write()
-        file.cd
-    else:
-        print("Info: Skipping yield hists")
 
+    #* Write histograms
+    for h in tqdm(yield_hists, desc="Info: Filling yield hists: "):
+        h.Write()
+    for h in tqdm(run_hists, desc="Info: Filling run hists: "):
+        h.Write()
+
+    #* Close the file
+    tree.Fill()
+    tree.Write()
     file.Close()
-    print(f"Info: Wrote output to {args.output_file}")
+    print(f"Info: Wrote output to {output_file}")
 
+    #* Move output file to output directory
+    os.makedirs(args.output_file_dir, exist_ok=True)
+    os.makedirs(f"{args.output_file_dir}/logs", exist_ok=True) # just in case the log directory doesn't exist
+    print(f"Info: transferring output file: {output_file} -> {args.output_file_dir}/{output_file}")
+    shutil.move(output_file, f"{args.output_file_dir}/{output_file}")
+    
 
     #* Print cutflow
     print("\nInfo: Cutflow Report:")
-    cutReport = df_for_yields.Report()
+    cutReport = df.Report()
     cutReport.Print()
 
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_files", "-i", nargs='+', help = "Imput sample list yaml file(s)", required=True)
-    parser.add_argument("--output_file", "-o", type=str, default="output.root", help = "Output file for the results")
+    parser.add_argument("run", type=int, help="Run to select")
+    parser.add_argument("--input_file_list_dir", "-i", help="directory to txt files containing the available NTuple paths", default=f"{os.get_cwd()}/faser_filelists")
+    parser.add_argument("--output_file_dir", "-o", type=str, default="output", help = "Output file directory")
     parser.add_argument("--grl_path", "-g", type=str, default="/cvmfs/faser.cern.ch/repo/sw/runlist/v8", help = "Path to directory containing GRL files in the .json format")
-    parser.add_argument("--nCPUS", "-j", type=int, default=0, help = "Number of CPU cores to use. Default is zero, i.e. all cores")
-    parser.add_argument("--skip_yields", "-y", action="store_true", help= "If True, run the yield histograms")
-    parser.add_argument("--skip_per_run", "-r", action="store_true", help= "If True, run the per run histograms")
-    parser.add_argument("--differential", "-d", action="store_true", help= "If True, make per run histograms per fb^-1")
-    parser.add_argument("--do_not_split", "-n", action="store_true", help= "If True, do not split the per run histograms by run. Make a total histogram of all runs instead.")
     args = parser.parse_args()
 
     for key in vars(args):
         print(f"\t {key:<30}: {getattr(args, key)}")
+
+    # Make sure all path args are absolute paths so condor doens't get lost
+    args.input_file_list_dir = os.path.abspath(args.input_file_list_dir)
+    args.output_file_dir = os.path.abspath(args.output_file_dir)
+    args.grl_path = os.path.abspath(args.grl_path)
 
 
     main(args)
