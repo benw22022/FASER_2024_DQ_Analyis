@@ -760,7 +760,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("run", type=int, help="Run to select")
-    parser.add_argument("--input_file_list_dir", "-i", help="directory to txt files containing the available NTuple paths", default=f"{os.get_cwd()}/faser_filelists")
+    parser.add_argument("--input_file_list_dir", "-i", help="directory to txt files containing the available NTuple paths", default=f"{os.getcwd()}/faser_filelists")
     parser.add_argument("--output_file_dir", "-o", type=str, default="output", help = "Output file directory")
     parser.add_argument("--grl_path", "-g", type=str, default="/cvmfs/faser.cern.ch/repo/sw/runlist/v8", help = "Path to directory containing GRL files in the .json format")
     args = parser.parse_args()
