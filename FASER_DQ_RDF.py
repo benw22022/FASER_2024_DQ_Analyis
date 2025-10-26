@@ -521,6 +521,74 @@ def book_per_run_hists(df: ROOT.RDataFrame, run_number: int=None, lumi: float=No
     per_run_histos.append(df_this_run.Histo1D(("Calo2_charge", "Calo2_charge;Calo2_charge;Events", 100, 0.01, 4.0), f"Calo2_charge", "weight"))
     per_run_histos.append(df_this_run.Histo1D(("Calo3_charge", "Calo3_charge;Calo3_charge;Events", 100, 0.01, 4.0), f"Calo3_charge", "weight"))
 
+
+    #New Calorimeter Variables, by Oscar.
+    #CaloLoi_nMIP
+    per_run_histos.append(df_this_run.Histo1D(("CaloLo0_nMIP", "CaloLo0_nMIP;CaloLo0_nMIP;Events", 100, 0.01, 2000), f"CaloLo0_nMIP", "weight"))
+    per_run_histos.append(df_this_run.Histo1D(("CaloLo1_nMIP", "CaloLo1_nMIP;CaloLo1_nMIP;Events", 100, 0.01, 2000), f"CaloLo1_nMIP", "weight"))
+    per_run_histos.append(df_this_run.Histo1D(("CaloLo2_nMIP", "CaloLo2_nMIP;CaloLo2_nMIP;Events", 100, 0.01, 2000), f"CaloLo2_nMIP", "weight"))
+    per_run_histos.append(df_this_run.Histo1D(("CaloLo3_nMIP", "CaloLo3_nMIP;CaloLo3_nMIP;Events", 100, 0.01, 2000), f"CaloLo3_nMIP", "weight"))
+
+    #CaloLoi_E_dep
+    per_run_histos.append(df_this_run.Histo1D(("CaloLo0_E_dep", "CaloLo0_E_dep;CaloLo0_E_dep;Events", 100, 0.01*GeV, 100*GeV), f"CaloLo0_E_dep", "weight"))
+    per_run_histos.append(df_this_run.Histo1D(("CaloLo1_E_dep", "CaloLo1_E_dep;CaloLo1_E_dep;Events", 100, 0.01*GeV, 100*GeV), f"CaloLo1_E_dep", "weight"))
+    per_run_histos.append(df_this_run.Histo1D(("CaloLo2_E_dep", "CaloLo2_E_dep;CaloLo2_E_dep;Events", 100, 0.01*GeV, 100*GeV), f"CaloLo2_E_dep", "weight"))
+    per_run_histos.append(df_this_run.Histo1D(("CaloLo3_E_dep", "CaloLo3_E_dep;CaloLo3_E_dep;Events", 100, 0.01*GeV, 100*GeV), f"CaloLo3_E_dep", "weight"))
+
+    #CaloLoi_E_EM
+    per_run_histos.append(df_this_run.Histo1D(("CaloLo0_E_EM", "CaloLo0_E_EM;CaloLo0_E_EM;Events", 100, 0.01*GeV, 100*GeV), f"CaloLo0_E_EM", "weight"))
+    per_run_histos.append(df_this_run.Histo1D(("CaloLo1_E_EM", "CaloLo1_E_EM;CaloLo1_E_EM;Events", 100, 0.01*GeV, 100*GeV), f"CaloLo1_E_EM", "weight"))
+    per_run_histos.append(df_this_run.Histo1D(("CaloLo2_E_EM", "CaloLo2_E_EM;CaloLo2_E_EM;Events", 100, 0.01*GeV, 100*GeV), f"CaloLo2_E_EM", "weight"))
+    per_run_histos.append(df_this_run.Histo1D(("CaloLo3_E_EM", "CaloLo3_E_EM;CaloLo3_E_EM;Events", 100, 0.01*GeV, 100*GeV), f"CaloLo3_E_EM", "weight"))
+
+    #CaloHii_nMIP
+    per_run_histos.append(df_this_run.Histo1D(("CaloHi0_nMIP", "CaloHi0_nMIP;CaloHi0_nMIP;Events", 100, 0.01, 3000), f"CaloHi0_nMIP", "weight"))
+    per_run_histos.append(df_this_run.Histo1D(("CaloHi1_nMIP", "CaloHi1_nMIP;CaloHi1_nMIP;Events", 100, 0.01, 3000), f"CaloHi1_nMIP", "weight"))
+    per_run_histos.append(df_this_run.Histo1D(("CaloHi2_nMIP", "CaloHi2_nMIP;CaloHi2_nMIP;Events", 100, 0.01, 3000), f"CaloHi2_nMIP", "weight"))
+    per_run_histos.append(df_this_run.Histo1D(("CaloHi3_nMIP", "CaloHi3_nMIP;CaloHi3_nMIP;Events", 100, 0.01, 3000), f"CaloHi3_nMIP", "weight"))
+
+    #CaloHii_E_dep
+    per_run_histos.append(df_this_run.Histo1D(("CaloHi0_E_dep", "CaloHi0_E_dep;CaloHi0_E_dep;Events", 100, 100*GeV, 2000*GeV), f"CaloHi0_E_dep", "weight"))
+    per_run_histos.append(df_this_run.Histo1D(("CaloHi1_E_dep", "CaloHi1_E_dep;CaloHi1_E_dep;Events", 100, 100*GeV, 2000*GeV), f"CaloHi1_E_dep", "weight"))
+    per_run_histos.append(df_this_run.Histo1D(("CaloHi2_E_dep", "CaloHi2_E_dep;CaloHi2_E_dep;Events", 100, 100*GeV, 2000*GeV), f"CaloHi2_E_dep", "weight"))
+    per_run_histos.append(df_this_run.Histo1D(("CaloHi3_E_dep", "CaloHi3_E_dep;CaloHi3_E_dep;Events", 100, 100*GeV, 2000*GeV), f"CaloHi3_E_dep", "weight"))
+
+    #CaloHii_E_EM
+    per_run_histos.append(df_this_run.Histo1D(("CaloHi0_E_EM", "CaloHi0_E_EM;CaloHi0_E_EM;Events", 100, 100*GeV, 2000*GeV), f"CaloHi0_E_EM", "weight"))
+    per_run_histos.append(df_this_run.Histo1D(("CaloHi1_E_EM", "CaloHi1_E_EM;CaloHi1_E_EM;Events", 100, 100*GeV, 2000*GeV), f"CaloHi1_E_EM", "weight"))
+    per_run_histos.append(df_this_run.Histo1D(("CaloHi2_E_EM", "CaloHi2_E_EM;CaloHi2_E_EM;Events", 100, 100*GeV, 2000*GeV), f"CaloHi2_E_EM", "weight"))
+    per_run_histos.append(df_this_run.Histo1D(("CaloHi3_E_EM", "CaloHi3_E_EM;CaloHi3_E_EM;Events", 100, 100*GeV, 2000*GeV), f"CaloHi3_E_EM", "weight"))
+
+    #CaloLo_total_nMIP
+    per_run_histos.append(df_this_run.Histo1D(("CaloLo_total_nMIP", "CaloLo_total_nMIP;CaloLo_total_nMIP;Events", 100, 10, 3000), f"CaloLo_total_nMIP", "weight"))
+
+    #CaloLo_total_E_dep
+    per_run_histos.append(df_this_run.Histo1D(("CaloLo_total_E_dep", "CaloLo_total_E_dep;CaloLo_total_E_dep;Events", 100, 0.01*GeV, 100*GeV), f"CaloLo_total_E_dep", "weight"))
+
+    #CaloLo_total_fit_E_EM
+    per_run_histos.append(df_this_run.Histo1D(("CaloLo_total_fit_E_EM", "CaloLo_total_fit_E_EM;CaloLo_total_fit_E_EM;Events", 100, 0.01*GeV, 100*GeV), f"CaloLo_total_fit_E_EM", "weight"))
+
+    #CaloLo_total_raw_E_EM
+    per_run_histos.append(df_this_run.Histo1D(("CaloLo_total_raw_E_EM", "CaloLo_total_raw_E_EM;CaloLo_total_raw_E_EM;Events", 100, 0.01*GeV, 100*GeV), f"CaloLo_total_raw_E_EM", "weight"))
+
+    #CaloLo_total_E_EM
+    per_run_histos.append(df_this_run.Histo1D(("CaloLo_total_E_EM", "CaloLo_total_E_EM;CaloLo_total_E_EM;Events", 100, 0.01*GeV, 100*GeV), f"CaloLo_total_E_EM", "weight"))
+
+    #CaloHi_total_nMIP
+    per_run_histos.append(df_this_run.Histo1D(("CaloHi_total_nMIP", "CaloHi_total_nMIP;CaloHi_total_nMIP;Events", 100, 10, 3000), f"CaloHi_total_nMIP", "weight"))
+
+    #CaloHi_total_E_dep
+    per_run_histos.append(df_this_run.Histo1D(("CaloHi_total_E_dep", "CaloHi_total_E_dep;CaloHi_total_E_dep;Events", 100, 100*GeV, 2000*GeV), f"CaloHi_total_E_dep", "weight"))
+
+    #CaloHi_total_fit_E_EM
+    per_run_histos.append(df_this_run.Histo1D(("CaloHi_total_fit_E_EM", "CaloHi_total_fit_E_EM;CaloHi_total_fit_E_EM;Events", 100, 100*GeV, 2000*GeV), f"CaloHi_total_fit_E_EM", "weight"))
+
+    #CaloHi_total_raw_E_EM
+    per_run_histos.append(df_this_run.Histo1D(("CaloHi_total_raw_E_EM", "CaloHi_total_raw_E_EM;CaloHi_total_raw_E_EM;Events", 100, 100*GeV, 2000*GeV), f"CaloHi_total_raw_E_EM", "weight"))
+
+    #CaloHi_total_E_EM
+    per_run_histos.append(df_this_run.Histo1D(("CaloHi_total_E_EM", "CaloHi_total_E_EM;CaloHi_total_E_EM;Events", 100, 100*GeV, 2000*GeV), f"CaloHi_total_E_EM", "weight"))
+
     event_times = np.array(df_this_run.AsNumpy(["eventTime"])["eventTime"])
     per_run_histos.append(df_this_run.Histo1D(("eventTime", "eventTime;eventTime;Events", 100, np.amin(event_times)-1, np.amax(event_times)+1), f"eventTime", "weight"))
 
@@ -535,7 +603,7 @@ def book_yield_hists(df: ROOT.RDataFrame, run_number: int) -> List:
     nruns = int(max(runs) - min(runs) + 1)
     rmin =  min(runs)
     rmax =  max(runs) + 1
-
+    #Tracks
     yield_hists.append(df.Histo1D(("Yield", "Yield;Yield;Events", nruns, rmin, rmax), "run"))
     yield_hists.append(df.Histo1D(("TrkYield", "TrkYield;TrkYield;Events", nruns, rmin, rmax), "run", "NTracks"))
     yield_hists.append(df.Histo1D(("PosTrkYield", "PosTrkYield;PosTrkYield;Events", nruns, rmin, rmax), "run", "NPosTracks"))
@@ -544,6 +612,12 @@ def book_yield_hists(df: ROOT.RDataFrame, run_number: int) -> List:
     yield_hists.append(df.Histo1D(("GoodTrkYield", "GoodTrkYield;GoodTrkYield;Events", nruns, rmin, rmax), "run", "NGoodTracks"))
     yield_hists.append(df.Histo1D(("GoodPosTrkYield", "GoodPosTrkYield;GoodPosTrkYield;Events", nruns, rmin, rmax), "run", "NGoodPosTracks"))
     yield_hists.append(df.Histo1D(("GoodNegTrkYield", "GoodNegTrkYield;GoodNegTrkYield;Events", nruns, rmin, rmax), "run", "NGoodNegTracks"))
+
+    #Calorimeter
+    yield_hists.append(df.Histo1D(("CaloHiYield", "CaloHiYield;CaloHiYield;Events", nruns, rmin, rmax), "run", "CaloHiYield"))
+    yield_hists.append(df.Histo1D(("CaloLoYield", "CaloLoYield;CaloLoYield;Events", nruns, rmin, rmax), "run", "CaloLoYield"))
+
+
     return yield_hists
 
 
@@ -661,6 +735,15 @@ def build_dataframe(file_list: List[str], tree: str='nt') -> ROOT.RDataFrame:
     df = df.Define("hitsCaloHi2", "(CaloHi2_status == 0) && (CaloLo2_raw_charge > 10 * CaloHi2_raw_charge)")
     df = df.Define("hitsCaloHi3", "(CaloHi3_status == 0) && (CaloLo3_raw_charge > 10 * CaloHi3_raw_charge)")
 
+    #Calorimeter Yields Variables
+    GeV = 1000
+    CaloHiCount = df.Filter(f"CaloHi_total_E_EM > {100*GeV}").Count()
+    CaloLoCount = df.Filter(f"CaloLo_total_E_EM > {10*GeV} && CaloLo_total_E_EM < {100*GeV}").Count()
+
+    CaloHiYield = CaloHiCount.GetValue()
+    CaloLoYield = CaloLoCount.GetValue()
+
+    df = df.Define("CaloHiYield", f"{CaloHiYield}").Define("CaloLoYield", f"{CaloLoYield}")
     return df
 
 
