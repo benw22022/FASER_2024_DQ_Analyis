@@ -1,0 +1,154 @@
+
+histograms:
+
+  Timing0_charge:
+    name: Timing0_charge
+    latex: "Timing Station 0 Charge [pC]"
+    nbins: 50
+    min: 1.0
+    max: 80.0
+
+  Timing1_charge:
+    name: Timing1_charge
+    latex: "Timing Station 1 Charge [pC]"
+    nbins: 50
+    min: 1.0
+    max: 80.0
+
+  Timing2_charge:
+    name: Timing2_charge
+    latex: "Timing Station 2 Charge [pC]"
+    nbins: 50
+    min: 1.0
+    max: 80.0
+
+  Timing3_charge:
+    name: Timing3_charge
+    latex: "Timing Station 3 Charge [pC]"
+    nbins: 50
+    min: 1.0
+    max: 80.0
+
+  #* Timing Station 0 Timing
+  Timing0_triggertime:
+    name: Timing0_triggertime
+    latex: "Timing Station 0 Trigger Time [pC]"
+    nbins: 100
+    min: -75
+    max: 50
+    cut:
+      expression: hitsTiming0
+      name: hitsTiming0
+
+  Timing0_localtime:
+    name: Timing0_localtime
+    latex: "Timing Station 0 Local Time [pC]"
+    nbins: 100
+    min: 150
+    max: 225
+    cut:
+      expression: hitsTiming0
+      name: hitsTiming0
+
+  Timing0_bcidtime:
+    name: Timing0_bcidtime
+    latex: "Timing Station 0 BCID Time [pC]"
+    nbins: 100
+    min: 0
+    max: 30
+    cut:
+      expression: hitsTiming0
+      name: hitsTiming0
+
+#* Timing Station 1 Timing
+  Timing1_triggertime:
+    name: Timing1_triggertime
+    latex: "Timing Station 1 Trigger Time [pC]"
+    nbins: 100
+    min: -75
+    max: 50
+    cut:
+      expression: hitsTiming1
+      name: hitsTiming1
+
+  Timing1_localtime:
+    name: Timing1_localtime
+    latex: "Timing Station 1 Local Time [pC]"
+    nbins: 100
+    min: 150
+    max: 225
+    cut:
+      expression: hitsTiming1
+      name: hitsTiming1
+
+  Timing1_bcidtime:
+    name: Timing1_bcidtime
+    latex: "Timing Station 1 BCID Time [pC]"
+    nbins: 100
+    min: 0
+    max: 30
+    cut:
+      expression: hitsTiming1
+      name: hitsTiming1
+    
+#* Timing Station 2 Timing
+  Timing2_triggertime:
+    name: Timing2_triggertime
+    latex: "Timing Station 2 Trigger Time [pC]"
+    nbins: 100
+    min: -75
+    max: 50
+    cut:
+      expression: hitsTiming2
+      name: hitsTiming2
+
+  Timing2_localtime:
+    name: Timing2_localtime
+    latex: "Timing Station 2 Local Time [pC]"
+    nbins: 100
+    min: 150
+    max: 225
+    cut:
+      expression: hitsTiming2
+      name: hitsTiming2
+
+  Timing2_bcidtime:
+    name: Timing2_bcidtime
+    latex: "Timing Station 2 BCID Time [pC]"
+    nbins: 100
+    min: 0
+    max: 30
+    cut:
+      expression: hitsTiming2
+      name: hitsTiming2
+
+#* Timing Station 3 Timing
+  Timing3_triggertime:
+    name: Timing3_triggertime
+    latex: "Timing Station 3 Trigger Time [pC]"
+    nbins: 100
+    min: -75
+    max: 50
+    cut:
+      expression: hitsTiming3
+      name: hitsTiming3
+
+  Timing3_localtime:
+    name: Timing3_localtime
+    latex: "Timing Station 3 Local Time [pC]"
+    nbins: 100
+    min: 150
+    max: 225
+    cut:
+      expression: hitsTiming3
+      name: hitsTiming3
+
+  Timing3_bcidtime:
+    name: Timing3_bcidtime
+    latex: "Timing Station 3 BCID Time [pC]"
+    nbins: 100
+    min: 0
+    max: 30
+    cut:
+      expression: hitsTiming3
+      name: hitsTiming3

@@ -1,0 +1,79 @@
+histograms:
+    
+  Preshower0_charge:
+    name: Preshower0_charge
+    latex: "Preshower 0 Charge [pC]"
+    nbins: 50
+    min: 0.01
+    max: 15.0
+
+  Preshower1_charge:
+    name: Preshower1_charge
+    latex: "Preshower 1 Charge [pC]"
+    nbins: 50
+    min: 0.01
+    max: 15.0
+
+  #* Preshower Station 0 Timing Hists
+  Preshower0_triggertime:
+    name: Preshower0_triggertime
+    latex: "Preshower Station 0 Trigger Time [ns]"
+    nbins: 100
+    min: -75
+    max: 50
+    cut:
+      expression: hitsPreshower0
+      name: Hits Preshower Station 0
+
+  Preshower0_localtime:
+    name: Preshower0_localtime
+    latex: "Preshower Station 0 Local Time [ns]"
+    nbins: 100
+    min: 150
+    max: 225
+    cut:
+      expression: hitsPreshower0
+      name: Hits Preshower Station 0
+
+  
+  Preshower0_bcidtime:
+    name: Preshower0_bcidtime
+    latex: "Preshower Station 0 BCID Time [ns]"
+    nbins: 100
+    min: 150
+    max: 225
+    cut:
+      expression: hitsPreshower0
+      name: Hits Preshower Station 0
+
+  #* Preshower Station 1 Timing Hists
+  Preshower1_triggertime:
+    name: Preshower1_triggertime
+    latex: "Preshower Station 1 Trigger Time [ns]"
+    nbins: 100
+    min: -75
+    max: 50
+    cut:
+      expression: hitsPreshower1
+      name: Hits Preshower Station 1
+
+  Preshower1_localtime:
+    name: Preshower1_localtime
+    latex: "Preshower Station 1 Local Time [ns]"
+    nbins: 100
+    min: 150
+    max: 225
+    cut:
+      expression: hitsPreshower1
+      name: Hits Preshower Station 1
+
+  
+  Preshower1_bcidtime:
+    name: Preshower1_bcidtime
+    latex: "Preshower Station 1 BCID Time [ns]"
+    nbins: 100
+    min: 150
+    max: 225
+    cut:
+      expression: hitsPreshower1
+      name: Hits Preshower Station 1

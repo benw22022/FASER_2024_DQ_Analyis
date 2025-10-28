@@ -1,0 +1,154 @@
+histograms:
+
+  Veto10_charge:
+      name: Veto10_charge
+      latex: "Veto Station 10 Charge [pC]"
+      nbins: 50
+      min: 0.01
+      max: 300.0
+
+  Veto11_charge:
+    name: Veto11_charge
+    latex: "Veto Station 11 Charge [pC]"
+    nbins: 50
+    min: 0.01
+    max: 300.0
+
+  Veto20_charge:
+    name: Veto10_charge
+    latex: "Veto Station 10 Charge [pC]"
+    nbins: 50
+    min: 0.01
+    max: 300.0
+  
+  Veto21_charge:
+    name: Veto10_charge
+    latex: "Veto Station 10 Charge [pC]"
+    nbins: 50
+    min: 0.01
+    max: 300.0
+
+  #* Timing Veto Station 10
+  Veto10_triggertime:
+    name: Veto10_triggertime
+    latex: "Veto Station 10 Trigger Time [ns]"
+    nbins: 100
+    min: -100
+    max: 50
+    cut:
+      expression: hitsVeto10
+      name: Hits Veto Station 10
+
+  Veto10_localtime:
+    name: Veto10_localtime
+    latex: "Veto Station 10 Local Time [ns]"
+    nbins: 100
+    min: 120
+    max: 225
+    cut:
+      expression: hitsVeto10
+      name: Hits Veto Station 10
+
+  Veto10_bcidtime:
+    name: Veto10_bcidtime
+    latex: "Veto Station 10 BCID Time [ns]"
+    nbins: 100
+    min: 0
+    max: 30
+    cut:
+      expression: hitsVeto10
+      name: Hits Veto Station 10
+
+  #* Timing Veto Station 11
+  Veto11_triggertime:
+    name: Veto11_triggertime
+    latex: "Veto Station 11 Trigger Time [ns]"
+    nbins: 100
+    min: -100
+    max: 50
+    cut:
+      expression: hitsVeto11
+      name: Hits Veto Station 11
+
+  Veto11_localtime:
+    name: Veto11_localtime
+    latex: "Veto Station 11 Local Time [ns]"
+    nbins: 100
+    min: 120
+    max: 225
+    cut:
+      expression: hitsVeto11
+      name: Hits Veto Station 11
+
+  Veto11_bcidtime:
+    name: Veto11_bcidtime
+    latex: "Veto Station 11 BCID Time [ns]"
+    nbins: 100
+    min: 0
+    max: 30
+    cut:
+      expression: hitsVeto11
+      name: Hits Veto Station 11
+
+  #* Timing Veto Station 20
+  Veto20_triggertime:
+    name: Veto20_triggertime
+    latex: "Veto Station 20 Trigger Time [ns]"
+    nbins: 100
+    min: -100
+    max: 50
+    cut:
+      expression: hitsVeto20
+      name: Hits Veto Station 20
+
+  Veto20_localtime:
+    name: Veto20_localtime
+    latex: "Veto Station 20 Local Time [ns]"
+    nbins: 100
+    min: 120
+    max: 225
+    cut:
+      expression: hitsVeto20
+      name: Hits Veto Station 20
+
+  Veto20_bcidtime:
+    name: Veto20_bcidtime
+    latex: "Veto Station 20 BCID Time [ns]"
+    nbins: 100
+    min: 0
+    max: 30
+    cut:
+      expression: hitsVeto20
+      name: Hits Veto Station 20
+
+  #* Timing Veto Station 21
+  Veto21_triggertime:
+    name: Veto21_triggertime
+    latex: "Veto Station 21 Trigger Time [ns]"
+    nbins: 100
+    min: -100
+    max: 50
+    cut:
+      expression: hitsVeto21
+      name: Hits Veto Station 21
+
+  Veto21_localtime:
+    name: Veto21_localtime
+    latex: "Veto Station 21 Local Time [ns]"
+    nbins: 100
+    min: 120
+    max: 225
+    cut:
+      expression: hitsVeto21
+      name: Hits Veto Station 21
+
+  Veto21_bcidtime:
+    name: Veto21_bcidtime
+    latex: "Veto Station 21 BCID Time [ns]"
+    nbins: 100
+    min: 0
+    max: 30
+    cut:
+      expression: hitsVeto21
+      name: Hits Veto Station 21
+  

@@ -1,0 +1,297 @@
+histograms:
+
+  #* These are independant of logh/low channels
+  CaloLo0_charge:
+    name: CaloLo0_charge
+    latex: CaloLo Module 0 Charge [pC]
+    nbins: 100
+    min: 0.01
+    max: 4.0
+
+  CaloLo1_charge:
+    name: CaloLo1_charge
+    latex: CaloLo Module 1 Charge [pC]
+    nbins: 100
+    min: 0.01
+    max: 4.0
+
+  CaloLo2_charge:
+    name: CaloLo2_charge
+    latex: CaloLo Module 2 Charge [pC]
+    nbins: 100
+    min: 0.01
+    max: 4.0
+
+  CaloLo3_charge:
+    name: CaloLo3_charge
+    latex: CaloLo Module 3 Charge [pC]
+    nbins: 100
+    min: 0.01
+    max: 4.0
+
+  #* CaloLo_nMIP
+  CaloLo0_nMIP:
+    name: CaloLo0_nMIP
+    latex: r"CaloLo0 $n_\text{MIP}$"
+    nbins: 100
+    min: 0.01
+    max: 3000
+
+  CaloLo1_nMIP:
+    name: CaloLo1_nMIP
+    latex: r"CaloLo1 $n_\text{MIP}$"
+    nbins: 100
+    min: 0.01
+    max: 3000
+
+  CaloLo2_nMIP:
+    name: CaloLo2_nMIP
+    latex: r"CaloLo2 $n_\text{MIP}$"
+    nbins: 100
+    min: 0.01
+    max: 3000
+  
+  CaloLo3_nMIP:
+    name: CaloLo3_nMIP
+    latex: r"CaloLo3 $n_\text{MIP}$"
+    nbins: 100
+    min: 0.01
+    max: 3000
+
+  #* CaloLoi_E_dep
+  CaloLo0_E_dep:
+    name: CaloLo0_E_dep
+    latex: r"CaloLo0 $E_\text{dep}$ [GeV]"
+    nbins: 100
+    min: 100
+    max: 2000
+    unit_scale: 1000 # MeV -> GeV
+
+  CaloLo1_E_dep:
+    name: CaloLo1_E_dep
+    latex: r"CaloLo1 $E_\text{dep}$ [GeV]"
+    nbins: 100
+    min: 100
+    max: 2000
+    unit_scale: 1000 # MeV -> GeV
+
+  CaloLo2_E_dep:
+    name: CaloLo2_E_dep
+    latex: r"CaloLo2 $E_\text{dep}$ [GeV]"
+    nbins: 100
+    min: 100
+    max: 2000
+    unit_scale: 1000 # MeV -> GeV
+
+  CaloLo3_E_dep:
+    name: CaloLo3_E_dep
+    latex: r"CaloLo3 $E_\text{dep}$ [GeV]"
+    nbins: 100
+    min: 100
+    max: 2000
+    unit_scale: 1000 # MeV -> GeV
+
+  #* CaloLoi_E_EM
+  CaloLo0_E_EM:
+    name: CaloLo0_E_EM
+    latex: r"CaloLo0 $E_\text{EM}$"  
+    nbins: 100
+    min: 100
+    max: 2000
+    unit_scale: 1000 # MeV -> GeV
+
+  CaloLo1_E_EM:
+    name: CaloLo1_E_EM
+    latex: r"CaloLo1 $E_\text{EM}$"  
+    nbins: 100
+    min: 100
+    max: 2000
+    unit_scale: 1000 # MeV -> GeV
+
+  CaloLo2_E_EM:
+    name: CaloLo2_E_EM
+    latex: r"CaloLo2 $E_\text{EM}$"  
+    nbins: 100
+    min: 100
+    max: 2000
+    unit_scale: 1000 # MeV -> GeV
+
+  CaloLo3_E_EM:
+    name: CaloLo3_E_EM
+    latex: r"CaloLo3 $E_\text{EM}$"  
+    nbins: 100
+    min: 100
+    max: 2000
+    unit_scale: 1000 # MeV -> GeV
+
+
+  #* CaloLo_total_nMIP
+  CaloLo_total_nMIP:
+    name: CaloLo_total_nMIP
+    latex: "CaloLo Total $n_\text{MIP}$"  
+    nbins: 100
+    min: 10
+    max: 3000
+
+  #* CaloLo_total_E_dep
+  CaloLo_total_E_dep:
+    name: CaloLo_total_E_dep
+    latex: r"CaloLo Total $E_\text{dep} [GeV]$"
+    nbins: 100
+    min: 100
+    max: 2000
+    unit_scale: 1000 # MeV -> GeV
+
+  #* CaloLo_total_fit_E_EM
+  CaloLo_total_fit_E_EM:
+    name: CaloLo_total_fit_E_EM
+    latex: r"CaloLo Total Fit $E_\text{EM}$ [GeV]"
+    nbins: 100
+    min: 100
+    max: 2000
+    unit_scale: 1000 # MeV -> GeV
+
+  #* CaloLo_total_raw_E_EM
+  CaloLo_total_raw_E_EM: 
+    name: CaloLo_total_raw_E_EM
+    latex: r"CaloLo Total Raw $E_\text{EM}$ [GeV]"
+    nbins: 100
+    min: 100
+    max: 2000
+    unit_scale: 1000 # MeV -> GeV
+
+  #* CaloLo_total_E_EM
+  CaloLo_total_E_EM:
+    name: CaloLo_total_E_EM
+    latex: r"CaloLo total $\text{E_EM}$ [GeV]"
+    nbins: 100
+    min: 100
+    max: 2000
+    unit_scale: 1000 # MeV -> GeV
+
+    
+
+  #* CaloLo0 Timing hists
+  CaloLo0_triggertime:
+    name: CaloLo0_triggertime
+    latex: CaloLo0 Trigger Time [ns]
+    nbins: 100
+    min: -75
+    max: 50
+    cut:
+      expression: hitsCaloLo0
+      name: hits Calorimeter Module 0 (logh Gain)
+
+  CaloLo0_localtime:
+    name: CaloLo0_localtime
+    latex: CaloLo0 Local Time [ns]
+    nbins: 100
+    min: 150
+    max: 225
+    cut:
+      expression: hitsCaloLo0
+      name: hits Calorimeter Module 0 (logh Gain)
+
+  CaloLo0_bcidtime:
+    name: CaloLo0_bcidtime
+    latex: CaloLo0 BCID Time [ns]
+    nbins: 100
+    min: 0
+    max: 30
+    cut:
+      expression: hitsCaloLo0
+      name: hits Calorimeter Module 0 (logh Gain)
+
+  
+  #* CaloLo1 Timing hists
+  CaloLo1_triggertime:
+    name: CaloLo1_triggertime
+    latex: CaloLo1 Trigger Time [ns]
+    nbins: 100
+    min: -75
+    max: 50
+    cut:
+      expression: hitsCaloLo1
+      name: hits Calorimeter Module 1 (logh Gain)
+
+  CaloLo1_localtime:
+    name: CaloLo1_localtime
+    latex: CaloLo1 Local Time [ns]
+    nbins: 100
+    min: 150
+    max: 225
+    cut:
+      expression: hitsCaloLo1
+      name: hits Calorimeter Module 1 (logh Gain)
+
+  CaloLo1_bcidtime:
+    name: CaloLo1_bcidtime
+    latex: CaloLo1 BCID Time [ns]
+    nbins: 100
+    min: 0
+    max: 30
+    cut:
+      expression: hitsCaloLo1
+      name: hits Calorimeter Module 1 (logh Gain)
+
+  #* CaloLo2 Timing hists
+  CaloLo2_triggertime:
+    name: CaloLo2_triggertime
+    latex: CaloLo2 Trigger Time [ns]
+    nbins: 100
+    min: -75
+    max: 50
+    cut:
+      expression: hitsCaloLo2
+      name: hits Calorimeter Module 2 (logh Gain)
+
+  CaloLo2_localtime:
+    name: CaloLo2_localtime
+    latex: CaloLo2 Local Time [ns]
+    nbins: 100
+    min: 150
+    max: 225
+    cut:
+      expression: hitsCaloLo2
+      name: hits Calorimeter Module 2 (logh Gain)
+
+  CaloLo2_bcidtime:
+    name: CaloLo2_bcidtime
+    latex: CaloLo2 BCID Time [ns]
+    nbins: 100
+    min: 0
+    max: 30
+    cut:
+      expression: hitsCaloLo2
+      name: hits Calorimeter Module 2 (logh Gain)
+
+  #* CaloLo3 Timing hists
+  CaloLo1_triggertime:
+    name: CaloLo3_triggertime
+    latex: CaloLo3 Trigger Time [ns]
+    nbins: 100
+    min: -75
+    max: 50
+    cut:
+      expression: hitsCaloLo3
+      name: hits Calorimeter Module 3 (logh Gain)
+
+  CaloLo3_localtime:
+    name: CaloLo3_localtime
+    latex: CaloLo3 Local Time [ns]
+    nbins: 100
+    min: 150
+    max: 225
+    cut:
+      expression: hitsCaloLo3
+      name: hits Calorimeter Module 3 (logh Gain)
+
+  CaloLo3_bcidtime:
+    name: CaloLo3_bcidtime
+    latex: CaloLo3 BCID Time [ns]
+    nbins: 100
+    min: 0
+    max: 30
+    cut:
+      expression: hitsCaloLo3
+      name: hits Calorimeter Module 3 (logh Gain)
