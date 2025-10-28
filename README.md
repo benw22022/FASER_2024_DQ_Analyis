@@ -30,6 +30,23 @@ In this case I alias the variables which don't exist to the closest match. E.g. 
 
 ## How to run
 
+The easiest way to setup the environment for this code is with an `LCG` release
+
+```bash
+source /cvmfs/sft.cern.ch/lcg/views/LCG_107/x86_64-el9-gcc11-opt/setup.sh
+```
+
+To generate the data quality plots for a single run you can do something like
+
+```bash
+python3 FASER_DQ_RDF.py 14797 -o test
+```
+
+you should get a file called `test/14797.root`. 
+
+
+## Batch Submission
+
 This code is optimised to run using a `htcondor` cluster where you submit one job per run
 To submit jobs you need three files:
 - A bash executable like `run_DQ.sh`
@@ -86,17 +103,7 @@ python3 /home/ppd/bewilson/FASER_2024_DQ_Analyis/FASER_DQ_RDF.py $run -o $output
 
 Before submitting the to condor you should test your job locally first to see if it works, e.g. if you run
 
-```bash
-python3 FASER_DQ_RDF_improved.py 14797 -o test
-```
 
-you should get a file called `test/14797.root`. You'll need to run the `LCG` setup first with
-
-```bash
-source /cvmfs/sft.cern.ch/lcg/views/LCG_107/x86_64-el9-gcc11-opt/setup.sh
-```
-
-but this only needs to be done once per terminal session.
 
 I find that on non-lxplus machines I get prompted for the password to my grid certificate when running the code in a terminal like this. If you the code doesn't run, it might be because you need one (I can't remember what the error message is if this happens). You can obtain a grid certificate from [here](https://ca.cern.ch/ca/user/Request.aspx?template=EE2User) and follow the instructions in this [evernote](https://lite.evernote.com/note/c7bc28df-e637-4625-b6a5-5b97d0b3a93a) on how to install it on your machine (this guide was written a while ago for ATLAS users at Manchster you just need to follow the bit from where it says "*Get the certificates working - lxplus*" - ignore the stuff about VO membership).
 
