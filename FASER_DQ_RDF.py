@@ -32,7 +32,10 @@ def get_run_number_lumi_dict(path_to_grls: str) -> Dict[int, float]:
     """
     Parse the .csv files in the Good Run List (GRL) directory to map the run number to the recorded luminosity
     args:
-        path_to_grls: str - path to directory containing the .json GRL files
+        `path_to_grls`: `str` - path to directory containing the .json GRL files
+    
+    returns:
+        `run_lumi_dict`: `Dict` - Dictionary which maps run number to luminosity (in /fb) 
     """
 
     grl_csvs = glob.glob(f"{path_to_grls}/*.csv")
@@ -65,13 +68,13 @@ def make_excluded_times_cut(path_to_grls: str) -> str:
     remove the bad time periods
 
     args:
-        path_to_grls: str - path to directory containing the .json GRL files
+        `path_to_grls`: `str` - path to directory containing the .json GRL files
     
     returns:
-        cut_str: str - a string which can be used with ROOT.RDataFrame::Filter to filter out excluded time periods from runs
+        `cut_str`: `str` - a string which can be used with ROOT.RDataFrame::Filter to filter out excluded time periods from runs
 
     raises:
-        OSError if no .json file are found in `path_to_grls` directory
+        `OSError` if no `.json` file are found in `path_to_grls` directory
     """
 
     grl_jsons = glob.glob(f"{path_to_grls}/*.json")
@@ -119,14 +122,13 @@ def make_good_times_cut(path_to_grls: str) -> str:
     select for the stable periods.
 
     args:
-        path_to_grls: str - path to directory containing the .json GRL files
+        `path_to_grls`: `str` - path to directory containing the .json GRL files
     
     returns:
-        cut_str: str - a string which can be used with ROOT.RDataFrame::Filter to filter out select for time periods from runs
-
+        `cut_str`: `str` - a string which can be used with ROOT.RDataFrame::Filter to filter out select for time periods from runs
 
     raises:
-        OSError if no .json file are found in `path_to_grls` directory
+        `OSError` if no `.json` file are found in `path_to_grls` directory
     """
 
     grl_jsons = glob.glob(f"{path_to_grls}/*.json")
@@ -168,10 +170,10 @@ def validate_file_list(file_list) -> List[str]:
     File check while loops through input files and checks that they can be opened and that they contain the `nt` tree
 
     args: 
-        file_list: List[str] - list of files to check
+        `file_list`: `List[str]` - list of files to check
     
     returns:
-        good_files: List[str] - list of files which are openable and contain the `nt` tree
+        `good_files`: `List[str]` - list of files which are openable and contain the `nt` tree
     """
 
     bad_files = []
@@ -205,12 +207,12 @@ def check_df_and_apply_alias(df: ROOT.RDataFrame, column_name: str, column_alias
     by aliasing it to `column_alias`
 
     args:
-        df: ROOT.RDataframe - dataframe to apply aliases to
-        column_name: str - the column name to create via alias if not present in df
-        column_alias: str - the column that will be aliased to `column_name`
+        `df`: `ROOT.RDataframe` - dataframe to apply aliases to
+        `column_name`: `str` - the column name to create via alias if not present in df
+        `column_alias`: `str` - the column that will be aliased to `column_name`
 
     returns:
-        df: ROOT.RDataFrame - dataframe with the aliases applied (if required)
+        `df`: `ROOT.RDataFrame` - dataframe with the aliases applied (if required)
     """
 
     if column_name not in df.GetColumnNames():
@@ -223,31 +225,18 @@ def check_df_and_apply_alias(df: ROOT.RDataFrame, column_name: str, column_alias
 def alias_data(df: ROOT.RDataFrame, has_veto11) -> ROOT.RDataFrame:
     """
     The names of some variables changed with the introduction of prompt reco tag r0022 (in August 2025) 
+    and some new ones were added.
     This function creates an alias which maps the old names onto the new ones
     This function is kinda horrible, but I couldn't think of a better way to do things
 
     args: 
-        df: ROOT.RDataframe - dataframe to apply aliases to
+        `df`: `ROOT.RDataframe` - dataframe to apply aliases to
     
     returns:
-        df: ROOT.RDataFrame - dataframe with the aliases applied (if required)
+        `df`: `ROOT.RDataFrame` - dataframe with the aliases applied (if required)
     """
-    
 
-    # veto_prefix_map = {
-    # "Veto10_": "VetoSt10_",
-    # "Veto11_": "VetoSt11_",
-    # "Veto20_": "VetoSt20_",
-    # "Veto21_": "VetoSt21_",
-    # }
-    # if not has_veto11:
-    #     veto_prefix_map = {
-    #     "Veto10_": "VetoSt10_",
-    #     "Veto11_": "VetoSt10_", # fudge to get code to run on 2022/23 data
-    #     "Veto20_": "VetoSt20_",
-    #     "Veto21_": "VetoSt21_",
-    #     }
-
+    veto_prefix_map = {}
     if not has_veto11:
         veto_prefix_map = {
         "Veto11_": "Veto10_", # fudge to get code to run on 2022/23 data
@@ -308,29 +297,6 @@ def alias_data(df: ROOT.RDataFrame, has_veto11) -> ROOT.RDataFrame:
         for varname in calo_variables:
             df = check_df_and_apply_alias(df, old_prefix+varname, new_prefix+varname)  
 
-    #* Alias timing variables
-    # for time_var in ["localtime", "triggertime", "bcidtime"]:
-    #     df = check_df_and_apply_alias(df, f"VetoNu0_{time_var}",  f"VetoNu0_time")
-    #     df = check_df_and_apply_alias(df, f"VetoNu1_{time_var}",  f"VetoNu1_time")
-    #     df = check_df_and_apply_alias(df, f"Veto10_{time_var}",  f"Veto10_time")
-    #     df = check_df_and_apply_alias(df, f"Veto11_{time_var}",  f"Veto11_time")
-    #     df = check_df_and_apply_alias(df, f"Veto20_{time_var}",  f"Veto20_time")
-    #     df = check_df_and_apply_alias(df, f"Veto21_{time_var}",  f"Veto21_time")
-    #     df = check_df_and_apply_alias(df, f"timing0_{time_var}",  f"timing0_time")
-    #     df = check_df_and_apply_alias(df, f"timing1_{time_var}",  f"timing1_time")
-    #     df = check_df_and_apply_alias(df, f"timing2_{time_var}",  f"timing2_time")
-    #     df = check_df_and_apply_alias(df, f"timing3_{time_var}",  f"timing3_time")
-    #     df = check_df_and_apply_alias(df, f"preshower0_{time_var}",  f"preshower0_time")
-    #     df = check_df_and_apply_alias(df, f"preshower1_{time_var}",  f"preshower1_time")
-    #     df = check_df_and_apply_alias(df, f"CaloHi0_{time_var}",  f"Calo0_time")
-    #     df = check_df_and_apply_alias(df, f"CaloHi1_{time_var}",  f"Calo1_time")
-    #     df = check_df_and_apply_alias(df, f"CaloHi2_{time_var}",  f"Calo2_time")
-    #     df = check_df_and_apply_alias(df, f"CaloHi3_{time_var}",  f"Calo3_time")
-    #     df = check_df_and_apply_alias(df, f"CaloLo0_{time_var}",  f"Calo0_time")
-    #     df = check_df_and_apply_alias(df, f"CaloLo1_{time_var}",  f"Calo1_time")
-    #     df = check_df_and_apply_alias(df, f"CaloLo2_{time_var}",  f"Calo2_time")
-    #     df = check_df_and_apply_alias(df, f"CaloLo3_{time_var}",  f"Calo3_time")
-        
     #* Alias total calo variables
     df = check_df_and_apply_alias(df, "CaloHi_total_E_EM",  "Calo_total_E_EM")
     df = check_df_and_apply_alias(df, "CaloLo_total_E_EM",  "Calo_total_E_EM")
@@ -351,27 +317,29 @@ def book_per_run_hists(df: ROOT.RDataFrame, histogram_cfg: Dict, run_number: int
     Function to book histograms which need to be evaluated for each run seperately
     
     args:
-        df: ROOT.RDataFrame - the dataframe used to fill the histograms
-        histogram_Dict - A histogram config dict. The values of the config must have the following dict schema
+        `df`: `ROOT.RDataFrame` - the dataframe used to fill the histograms
+        `histogram_Dict`: `Dict` - A histogram config dict. The values of the config must have the following dict schema
 
+        ```
         {
         name: str           # the column to histogram
         nbins: int          # number of bins
         min: float          # lowest bin edge
         max: float          # hight bin edge
-        unit_scale: float   # factor by which to multiply column by to convert units. E.g. 1000 to convert MeV -> GeV
-        cut: Dict              # A dict with an expression field and a name field
+        unit_scale: float  (optional) # factor by which to multiply column by to convert units. E.g. 1000 to convert MeV -> GeV
+        cut: Dict (optional)             # A dict with an expression field and a name field
             {expression: str   # A cut to evaluate and apply to the data just for this histogram
              name: str         # A name to give this cut for the RDF cutflow
             }
         }
+        ```
 
-        run_number: int (optional) - the run number to select for if given. We usually just run 
+        `run_number`: `int`(optional) - the run number to select for if given. We usually just run 
         over one run per job so we don't need to set this. Option is there just in case your files
         contain multiple runs.
 
     returns:
-       per_run_histos: [List] - List of histograms to be filled
+       `per_run_histos`: `List` - List of histograms to be filled
     """
 
     if run_number:
@@ -384,15 +352,24 @@ def book_per_run_hists(df: ROOT.RDataFrame, histogram_cfg: Dict, run_number: int
 
     per_run_histos = []
 
+    available_columns = df.GetColumnNames()
+
     for conf in histogram_cfg.values():
+        
+        if conf['name'] not in available_columns:
+                logging.error(f"Could not find {conf['name']} in dataframe. Check your histogram configs and definitions.")
+                raise ValueError("Invalid histogram config")
+
+        #* Set a new histogram for making this histogram
         df_this_hist = df_this_run
         
         #* Rescale column to get in new units if asked
         column_name = conf['name']
         unit_scale = conf.get('unit_scale', False)
         if unit_scale:
-            df_this_hist = df_this_run.Define(f"{column_name}_times_{unit_scale}", f"{column_name} * {unit_scale}")
-            column_name = f"{column_name}_times_{unit_scale}"
+            new_column_name = f"{column_name}_times_{unit_scale}".replace('.', '_') # NB: cannot have '.' in column name
+            df_this_hist = df_this_hist.Define(new_column_name, f"{column_name} * {unit_scale}")
+            column_name = new_column_name
 
         #* Make a new dataframe with a cut applied if required, just for this histogram
         if conf.get('cut', False): 
@@ -401,12 +378,12 @@ def book_per_run_hists(df: ROOT.RDataFrame, histogram_cfg: Dict, run_number: int
             if not cut_expr:
                 logging.warning(f"You tried to apply a cut for histogram {conf['name']} but no cut expression was given! No cut will be applied here.")
             else:
-                df_this_hist = df_this_run.Filter(cut_expr, cut_name)
+                df_this_hist = df_this_hist.Filter(cut_expr, cut_name)
         
         #* Now we book the histogram
         per_run_histos.append(df_this_hist.Histo1D((conf['name'], f"{conf['name']};{conf['name']};Events", conf['nbins'], conf['min'], conf['max']), column_name, "weight"))
     
-    #* Now finally book the eventTime histogram. This is kinda awkward to define with a simple yaml due the 
+    #* Now finally book the eventTime histogram. This is kinda awkward to define with a simple yaml due the upper/lower bin edges
     event_times = np.array(df_this_run.AsNumpy(["eventTime"])["eventTime"])
     per_run_histos.append(df_this_run.Histo1D(("eventTime", "eventTime;eventTime;Events", 100, np.amin(event_times)-1, np.amax(event_times)+1), f"eventTime", "weight"))
 
@@ -419,10 +396,10 @@ def book_yield_hists(df: ROOT.RDataFrame, run_number: int) -> List:
     Book the yield histograms for this run
     These are the total number of tracks and total calorimeter yield for this run
     args:
-        df: The ROOT RDataFRame
-        run_number: The run number - required to get the bin edges right
+        `df`: `ROOT.RDataFrame` - The ROOT RDataFRame
+        `run_number`: `int` -  The run number - required to get the bin edges right
     returns:
-        yield_hists: List of histogram result pointers
+        `yield_hists`: `List` - List of histogram result pointers
     """
 
     yield_hists = []
@@ -431,7 +408,8 @@ def book_yield_hists(df: ROOT.RDataFrame, run_number: int) -> List:
     nruns = int(max(runs) - min(runs) + 1)
     rmin =  min(runs)
     rmax =  max(runs) + 1
-    #Tracks
+    
+    # Track yields
     yield_hists.append(df.Histo1D(("Yield", "Yield;Yield;Events", nruns, rmin, rmax), "run"))
     yield_hists.append(df.Histo1D(("TrkYield", "TrkYield;TrkYield;Events", nruns, rmin, rmax), "run", "NTracks"))
     yield_hists.append(df.Histo1D(("PosTrkYield", "PosTrkYield;PosTrkYield;Events", nruns, rmin, rmax), "run", "NPosTracks"))
@@ -441,7 +419,7 @@ def book_yield_hists(df: ROOT.RDataFrame, run_number: int) -> List:
     yield_hists.append(df.Histo1D(("GoodPosTrkYield", "GoodPosTrkYield;GoodPosTrkYield;Events", nruns, rmin, rmax), "run", "NGoodPosTracks"))
     yield_hists.append(df.Histo1D(("GoodNegTrkYield", "GoodNegTrkYield;GoodNegTrkYield;Events", nruns, rmin, rmax), "run", "NGoodNegTracks"))
 
-    #Calorimeter
+    # Calorimeter yields
     yield_hists.append(df.Histo1D(("CaloHiYield", "CaloHiYield;CaloHiYield;Events", nruns, rmin, rmax), "run", "CaloHiYield"))
     yield_hists.append(df.Histo1D(("CaloLoYield", "CaloLoYield;CaloLoYield;Events", nruns, rmin, rmax), "run", "CaloLoYield"))
 
@@ -455,11 +433,11 @@ def build_dataframe(file_list: List[str], tree: str='nt') -> ROOT.RDataFrame:
     Applys the neccessary column definitions, aliases and data quality cuts
 
     args:
-        file_list: List[str] - list of files to load
-        tree: str - the name of the tree in the NTuples to read (default='nt')
+        `file_list`: `List[str]` - list of files to load
+        `tree`: `str` - the name of the tree in the NTuples to read (default='nt')
 
     returns:
-        df: ROOT.RDataFrame - the filtered dataframe with columns defined
+        `df`: `ROOT.RDataFrame` - the filtered dataframe with columns defined
     """
 
     df = ROOT.RDataFrame(tree, file_list)
@@ -474,7 +452,7 @@ def build_dataframe(file_list: List[str], tree: str='nt') -> ROOT.RDataFrame:
     df = alias_data(df, has_veto11)
 
     #* Allow shorter use of vecops functions in strings
-    #* e.g. DeltaPhi rather than ROOT::VecOps::DeltaPhi 
+    # e.g. DeltaPhi rather than ROOT::VecOps::DeltaPhi 
     ROOT.gInterpreter.Declare("using namespace ROOT::VecOps;")
 
     #* C++ defines (must not rely on anything defined below)
@@ -576,6 +554,11 @@ def parse_input_filelists(input_file_list_dir: str) -> Dict:
     The format of the files must have one file path per line
     The run number is the name of the parent directory of the root file
 
+    args:
+        `input_file_list_dir`: `str` - Path to directory containing `.txt` files, listing filepaths to NTuple files
+    
+    returns:
+        `file_dict`: `Dict` - A dictionary which maps the run number to a list of NTuple files for that run
 
     """
 
@@ -607,9 +590,9 @@ def parse_histogram_configs(histogram_cfg_dir: str) -> Dict:
     """
     Looks in a directory for `.yaml` files, checks if they have the key `histograms` then joins them together
     args:
-       histogram_cfg_dir: str - path to directory containing histogram configs
+       `histogram_cfg_dir`: str - path to directory containing histogram configs
     returns:
-        config_dict: dictionary of histogram configs
+        `config_dict`: dictionary of histogram configs
     """
 
     cfg_fpaths = glob.glob(f"{histogram_cfg_dir}/*.yaml")
@@ -625,6 +608,13 @@ def parse_histogram_configs(histogram_cfg_dir: str) -> Dict:
             if not this_cfg_dict.get('histograms', False):
                 logging.error(f"The config file {fpath} does not contain the key `histograms`. Please check the format of your config file.")
                 raise ValueError("Invalid histogram config")
+
+            #* Validate that each entry in the config has the requisite keys
+            required_keys = {'name', 'nbins', 'min', 'max'}
+            for key, cfg_dict in this_cfg_dict['histograms'].items():
+                if not required_keys <= cfg_dict.keys():
+                    logging.error(f"Histogram {key} in {fpath} is missing required keys. Missing keys: {required_keys - cfg_dict.keys()}. Check your config file.")
+                    raise ValueError("Invalid Histogram config")
             
             config_dict = config_dict | this_cfg_dict['histograms']
 
