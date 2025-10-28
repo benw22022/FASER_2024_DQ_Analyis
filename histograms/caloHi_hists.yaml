@@ -65,7 +65,7 @@ histograms:
     nbins: 100
     min: 100
     max: 2000
-    unit_scale: 1000 # MeV -> GeV
+    unit_scale: 0.001 # MeV -> GeV
 
   CaloHi1_E_dep:
     name: CaloHi1_E_dep
@@ -73,7 +73,7 @@ histograms:
     nbins: 100
     min: 100
     max: 2000
-    unit_scale: 1000 # MeV -> GeV
+    unit_scale: 0.001 # MeV -> GeV
 
   CaloHi2_E_dep:
     name: CaloHi2_E_dep
@@ -81,7 +81,7 @@ histograms:
     nbins: 100
     min: 100
     max: 2000
-    unit_scale: 1000 # MeV -> GeV
+    unit_scale: 0.001 # MeV -> GeV
 
   CaloHi3_E_dep:
     name: CaloHi3_E_dep
@@ -89,7 +89,7 @@ histograms:
     nbins: 100
     min: 100
     max: 2000
-    unit_scale: 1000 # MeV -> GeV
+    unit_scale: 0.001 # MeV -> GeV
 
   #* CaloHii_E_EM
   CaloHi0_E_EM:
@@ -98,7 +98,7 @@ histograms:
     nbins: 100
     min: 100
     max: 2000
-    unit_scale: 1000 # MeV -> GeV
+    unit_scale: 0.001 # MeV -> GeV
 
   CaloHi1_E_EM:
     name: CaloHi1_E_EM
@@ -106,7 +106,7 @@ histograms:
     nbins: 100
     min: 100
     max: 2000
-    unit_scale: 1000 # MeV -> GeV
+    unit_scale: 0.001 # MeV -> GeV
 
   CaloHi2_E_EM:
     name: CaloHi2_E_EM
@@ -114,7 +114,7 @@ histograms:
     nbins: 100
     min: 100
     max: 2000
-    unit_scale: 1000 # MeV -> GeV
+    unit_scale: 0.001 # MeV -> GeV
 
   CaloHi3_E_EM:
     name: CaloHi3_E_EM
@@ -122,7 +122,7 @@ histograms:
     nbins: 100
     min: 100
     max: 2000
-    unit_scale: 1000 # MeV -> GeV
+    unit_scale: 0.001 # MeV -> GeV
 
 
   #* CaloHi_total_nMIP
@@ -140,7 +140,7 @@ histograms:
     nbins: 100
     min: 100
     max: 2000
-    unit_scale: 1000 # MeV -> GeV
+    unit_scale: 0.001 # MeV -> GeV
 
   #* CaloHi_total_fit_E_EM
   CaloHi_total_fit_E_EM:
@@ -149,7 +149,7 @@ histograms:
     nbins: 100
     min: 100
     max: 2000
-    unit_scale: 1000 # MeV -> GeV
+    unit_scale: 0.001 # MeV -> GeV
 
   #* CaloHi_total_raw_E_EM
   CaloHi_total_raw_E_EM: 
@@ -158,7 +158,7 @@ histograms:
     nbins: 100
     min: 100
     max: 2000
-    unit_scale: 1000 # MeV -> GeV
+    unit_scale: 0.001 # MeV -> GeV
 
   #* CaloHi_total_E_EM
   CaloHi_total_E_EM:
@@ -167,7 +167,7 @@ histograms:
     nbins: 100
     min: 100
     max: 2000
-    unit_scale: 1000 # MeV -> GeV
+    unit_scale: 0.001 # MeV -> GeV
 
     
 
