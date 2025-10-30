@@ -1,0 +1,75 @@
+histograms:
+
+  VetoNu0_charge:
+    name: VetoNu0_charge
+    latex: "VetoNu0 Charge [pC]"
+    nbins: 50
+    min: 0.01
+    max: 300.0
+
+  VetoNu1_charge:
+    name: VetoNu1_charge
+    latex: "VetoNu1 Charge [pC]"
+    nbins: 50
+    min: 0.01
+    max: 300.0
+
+  VetoNu0_triggertime:
+    name: VetoNu0_triggertime
+    latex: r"VetoNu0 Trigger Time [ns]"   
+    nbins: 100
+    min: -50
+    max: 25
+    cut: 
+      expression: hitsVetoNu0
+      name: Hits VetoNu0
+
+  VetoNu0_localtime:
+    name: VetoNu0_localtime
+    latex: r"VetoNu0 Local Time [ns]"   
+    nbins: 100
+    min: 100
+    max: 200
+    cut: 
+      expression: hitsVetoNu0
+      name: Hits VetoNu0
+  
+  VetoNu0_bcidtime:
+    name: VetoNu0_bcidtime
+    latex: r"VetoNu0 BCID Time [ns]"   
+    nbins: 100
+    min: 0
+    max: 30
+    cut: 
+      expression: hitsVetoNu0
+      name: Hits VetoNu0
+
+  VetoNu1_triggertime:
+    name: VetoNu1_triggertime
+    latex: r"VetoNu1 Trigger Time [ns]"   
+    nbins: 100
+    min: -50
+    max: 25
+    cut: 
+      expression: hitsVetoNu1
+      name: Hits VetoNu1
+
+  VetoNu1_localtime:
+    name: VetoNu1_localtime
+    latex: r"VetoNu1 Local Time [ns]"   
+    nbins: 100
+    min: 100
+    max: 200
+    cut: 
+      expression: hitsVetoNu1
+      name: Hits VetoNu1
+  
+  VetoNu1_bcidtime:
+    name: VetoNu1_bcidtime
+    latex: r"VetoNu1 BCID Time [ns]"   
+    nbins: 100
+    min: 0
+    max: 30
+    cut: 
+      expression: hitsVetoNu1
+      name: Hits VetoNu1

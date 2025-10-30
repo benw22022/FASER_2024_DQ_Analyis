@@ -1,0 +1,103 @@
+histograms:
+
+  Track_theta_x0: # Upstream measurement
+    name: Track_theta_x0
+    latex: r"Track $\theta_x^0$ [rad]"
+    nbins: 50
+    min: -0.01
+    max: 0.01
+  
+  Track_theta_y0:
+    name: Track_theta_y0
+    latex: r"Track $\theta_y^0$ [rad]"
+    nbins: 50
+    min: -0.005
+    max: 0.005
+  
+  Track_theta_x1: # Downstream measurement
+    name: Track_theta_x1
+    latex: r"Track $\theta_x^1$ [rad]"
+    nbins: 50
+    min: -0.01
+    max: 0.01
+  
+  Track_theta_y1:
+    name: Track_theta_y1
+    latex: r"Track $\theta_y^1$ [rad]"
+    nbins: 50
+    min: -0.005
+    max: 0.005
+  
+  Track_pz_charge0:
+    name: Track_pz_charge0
+    latex: r"Track $p_z \times q$ [GeV]"
+    nbins: 100
+    min: -500
+    max: 500
+    unit_scale: 0.001 # MeV -> GeV
+
+  Track_Chi2:
+    name: Track_Chi2
+    latex: r"Track $\chi^2$"
+    nbins: 50
+    min: 0
+    max: 500
+
+  Track_nDoF:
+    name: Track_nDoF
+    latex: "Track NDF"
+    nbins: 50
+    min: 0
+    max: 20
+  
+  Track_chi2_per_dof:
+    name: Track_chi2_per_dof
+    latex: r"Track $\chi^2 / \text{NDF}$"
+    nbins: 50
+    min: 0
+    max: 25
+
+  Track_x0:
+    name: Track_x0
+    latex: r"Track $x_0$"
+    nbins: 100
+    min: -100
+    max: 100
+
+  Track_y0:
+    name: Track_y0
+    latex: r"Track $y_0$"
+    nbins: 100
+    min: -100
+    max: 100
+
+  Track_theta_x0_pos:
+    name: Track_theta_x0_pos
+    latex: r"Track $\theta_{x_0}^{q > 0}$ [rad]"
+    nbins: 50
+    min: -0.01
+    max: 0.01
+  
+  Track_theta_x0_neg:
+    name: Track_theta_x0_neg
+    latex: r"Track $\theta_{x_0}^{q < 0}$ [rad]"
+    nbins: 50
+    min: -0.01
+    max: 0.01
+  
+  
+  Track_theta_y0_pos:
+    name: Track_theta_y0_pos
+    latex: r"Track $\theta_{y_0}^{q > 0}$ [rad]"
+    nbins: 50
+    min: -0.005
+    max: 0.005
+  
+  Track_theta_y0_neg:
+    name: Track_theta_y0_neg
+    latex: r"Track $\theta_{y_0}^{q < 0}$ [rad]"
+    nbins: 50
+    min: -0.005
+    max: 0.005
+
+  

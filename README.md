@@ -21,12 +21,12 @@ The main script in this code is [`FASER_DQ_RDF.py`](https://github.com/benw22022
 `FASER_DQ_RDF.py` has the following arguments:
 - `run`: The run number (required)
 - `--input_files` (`-i`): Path to the directory containing `txt` files listing the available file paths (the paths to the latest files at time of writing for 2022-2024 are in `/faser_filelists`)
+- `--histograms` (`-c`): Path to directory containing the `.yaml` files which define the histograms
 - `--output_file_dir` (`-o`): Path to the output directory which will store the results. The output files themselves are named `<run_number>.root`
 - `--grl_path` (`-g`): Path to directory containing the good run lists in `json` format. These are required to apply cuts on excluded event times.
 
-There are some quirks with the code, like the aliasing functions (which I wrote so that the code would be compatible with different NTuple processing periods) - these are kinda irrelevant now that we have the reprocessed `r0022` data - but the functions are still there as an artifact.
-
-**Note**: The code doesn't work out of the box for 2022/2023 due to the variable naming changes and the new dual calorimeter readout - you'll need to adapt the code here yourself (sorry!)
+There are some quirks with the code, like the aliasing function which allows the code to run over 2022/2023 data where some variables didn't exists, such as the Hi/Lo gain calorimeter variables and the Veto 11 station.
+In this case I alias the variables which don't exist to the closest match. E.g. map `CaloHi0_charge` and `CaloLo0_charge` get aliased to `Calo0_charge`.
 
 ## How to run
 
@@ -66,7 +66,7 @@ The arguments file looks something like this:
 ...
 ```
 
-You'll want to do a search and replace the output directory path you the *absolute* path on your system. 
+You'll want to do a search and replace the output directory path to the *absolute* path on your system. 
 
 Finally the executable file looks like this
 
@@ -98,7 +98,7 @@ source /cvmfs/sft.cern.ch/lcg/views/LCG_107/x86_64-el9-gcc11-opt/setup.sh
 
 but this only needs to be done once per terminal session.
 
-I find that on non-lxplus machines I get prompted for the password to my grid certificate when running the code in a terminal like this. If you the code doesn't run, it might be because you need one (I have no idea what the error message is if this happens). You can obtain a grid certificate from [here](https://ca.cern.ch/ca/user/Request.aspx?template=EE2User) and follow the instructions in this [evernote](https://lite.evernote.com/note/c7bc28df-e637-4625-b6a5-5b97d0b3a93a) on how to install it on your machine (this guide was written a while ago for ATLAS users at Manchster you just need to follow the bit from where it says "*Get the certificates working - lxplus*" - ignore the stuff about VO membership).
+I find that on non-lxplus machines I get prompted for the password to my grid certificate when running the code in a terminal like this. If you the code doesn't run, it might be because you need one (I can't remember what the error message is if this happens). You can obtain a grid certificate from [here](https://ca.cern.ch/ca/user/Request.aspx?template=EE2User) and follow the instructions in this [evernote](https://lite.evernote.com/note/c7bc28df-e637-4625-b6a5-5b97d0b3a93a) on how to install it on your machine (this guide was written a while ago for ATLAS users at Manchster you just need to follow the bit from where it says "*Get the certificates working - lxplus*" - ignore the stuff about VO membership).
 
 Once you are happy with everything, then you can go ahead and submit the jobs. But first...
 
@@ -108,7 +108,7 @@ Once you are happy with everything, then you can go ahead and submit the jobs. B
 mkdir -p output_2024/logs
 ```
 
-... and then you can submit the jobs using 
+...and then you can submit the jobs using 
 
 ```bash
 condor_submit DQ_2024.submit
@@ -123,6 +123,36 @@ If the jobs are stuck on `hold` you can check the reason why by `condor_ssh_to_j
 If for some reason you want to cancel all your running/queued jobs you can kill them all with `condor_rm <your-username>` (or `condor_rm <jobID>` if it is just the one job you want to kill)
 
 For more detailed info on how to use `htcondor` refer to the CERN [`batchdocs`](https://batchdocs.web.cern.ch/index.html) webpage
+
+
+## Booking histograms
+To help keep the python code organised and to avoid the need to manage python paths, the histograms for different variables are defined using `yaml` config files. A config file needs the following structure:
+
+```yaml
+histograms:
+
+    # A unique key for this histogram config
+    my_histogram:                                
+        # Name of column in dataframe to plot. Must be defined in RDF at runtime
+        name: my_variable 
+        # Pretty name for plotting (optional)
+        latex: My Variable [Units]
+        # Number of bins
+        nbins: 50
+        # Lower bin edge
+        min: 0
+        # Upper bin edge
+        max: 100
+        # Factor to multiply values by before histograming. Useful for unit conversions (optional)
+        unit_scale: 0.001
+        # Cut to apply before histograming this variable (optional)
+        cut:
+            # The cut expression (must be parsable by PyROOT RDF)
+            expression: my_other_variable > 10
+            # A name to give the cut (optional)
+            name: This > 10 Units
+
+```
 
 
 ## xRootD
